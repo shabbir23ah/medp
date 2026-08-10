@@ -30,10 +30,14 @@ import { onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import PrescriptionCard from '../components/PrescriptionCard.vue';
 import { usePrescriptionsStore } from '../stores/prescriptions';
+import { subscribeToPush } from '../composables/useNotifications';
 
 const store = usePrescriptionsStore();
 
-onMounted(() => store.fetchPrescriptions());
+onMounted(() => {
+  store.fetchPrescriptions();
+  subscribeToPush();
+});
 
 function loadMore() {
   store.fetchPrescriptions(store.page + 1);
