@@ -1,22 +1,11 @@
 {
-  "app": {
-    "name": "MedPrescription",
-    "tagline": "Tus recetas, siempre contigo"
-  },
-  "common": {
-    "save": "Guardar",
-    "cancel": "Cancelar",
-    "delete": "Eliminar",
-    "edit": "Editar",
-    "add": "Añadir",
-    "search": "Buscar",
-    "loading": "Cargando...",
-    "error": "Ocurrió un error",
-    "retry": "Reintentar",
-    "confirm": "Confirmar",
-    "back": "Atrás",
-    "next": "Siguiente",
-    "done": "Hecho",
-    "close": "Cerrar"
-  }
+  "app": { "name": "MedPrescription", "tagline": "Sus recetas, siempre con usted" },
+  "nav": { "timeline": "Línea de Tiempo", "upload": "Subir", "reports": "Informes", "reminders": "Recordatorios", "profile": "Perfil", "settings": "Ajustes" },
+  "auth": { "phoneLabel": "Número de Teléfono", "phonePlaceholder": "+52XXXXXXXXXX", "sendOtp": "Enviar OTP", "otpSent": "OTP enviado a su teléfono", "otpLabel": "Ingrese OTP", "otpPlaceholder": "123456", "verify": "Verificar", "invalidOtp": "Código inválido o expirado", "logout": "Cerrar Sesión" },
+  "profile": { "title": "Mi Perfil", "name": "Nombre Completo", "email": "Correo (opcional)", "nid": "DNI", "dob": "Fecha de Nacimiento", "language": "Idioma", "save": "Guardar", "saved": "Perfil actualizado", "picture": "Foto de Perfil" },
+  "prescription": { "upload": "Subir Receta", "image": "Foto de la Receta", "doctor": "Nombre del Doctor", "hospital": "Hospital / Clínica", "diagnosis": "Diagnóstico", "date": "Fecha de Receta", "notes": "Notas", "medicines": "Medicamentos", "medicineName": "Nombre del Medicamento", "dosage": "Dosis", "frequency": "Frecuencia", "duration": "Duración", "timing": "Horario", "addMedicine": "+ Agregar Medicamento", "removeMedicine": "Eliminar", "submit": "Guardar Receta", "noPrescriptions": "Aún no hay recetas", "delete": "Eliminar", "confirmDelete": "¿Está seguro de eliminar esta receta?" },
+  "report": { "upload": "Subir Informe", "image": "Imagen del Informe", "type": "Tipo de Informe", "lab": "Laboratorio / Centro", "date": "Fecha del Informe", "notes": "Notas", "submit": "Guardar Informe", "noReports": "Aún no hay informes", "delete": "Eliminar" },
+  "reminder": { "title": "Recordatorios", "add": "Agregar Recordatorio", "type": "Tipo", "medicine": "Medicamento", "appointment": "Cita", "revisit": "Revisita", "report": "Informe", "reminderTitle": "Título", "datetime": "Fecha y Hora", "repeat": "Repetir", "repeatNone": "Ninguno", "repeatDaily": "Diario", "repeatWeekly": "Semanal", "repeatMonthly": "Mensual", "enabled": "Activado", "save": "Guardar", "noReminders": "Sin recordatorios" },
+  "settings": { "title": "Ajustes", "language": "Idioma", "notificationSettings": "Configuración de Notificaciones", "notificationsNote": "Seleccione qué tipos de recordatorio le envían notificaciones", "about": "Acerca de", "version": "Versión 1.0.0" },
+  "common": { "cancel": "Cancelar", "confirm": "Confirmar", "loading": "Cargando...", "error": "Algo salió mal", "back": "Volver", "save": "Guardar", "edit": "Editar", "today": "Hoy" }
 }

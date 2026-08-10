@@ -1,22 +1,11 @@
 {
-  "app": {
-    "name": "মেডপ্রেসক্রিপশন",
-    "tagline": "আপনার প্রেসক্রিপশন, সবসময় আপনার সাথে"
-  },
-  "common": {
-    "save": "সংরক্ষণ",
-    "cancel": "বাতিল",
-    "delete": "মুছুন",
-    "edit": "সম্পাদনা",
-    "add": "যোগ করুন",
-    "search": "অনুসন্ধান",
-    "loading": "লোড হচ্ছে...",
-    "error": "একটি ত্রুটি ঘটেছে",
-    "retry": "পুনরায় চেষ্টা করুন",
-    "confirm": "নিশ্চিত করুন",
-    "back": "পিছনে",
-    "next": "পরবর্তী",
-    "done": "সম্পন্ন",
-    "close": "বন্ধ"
-  }
+  "app": { "name": "মেডপ্রেসক্রিপশন", "tagline": "আপনার প্রেসক্রিপশন, সবসময় আপনার সাথে" },
+  "nav": { "timeline": "টাইমলাইন", "upload": "আপলোড", "reports": "রিপোর্ট", "reminders": "রিমাইন্ডার", "profile": "প্রোফাইল", "settings": "সেটিংস" },
+  "auth": { "phoneLabel": "ফোন নম্বর", "phonePlaceholder": "+8801XXXXXXXXX", "sendOtp": "OTP পাঠান", "otpSent": "আপনার ফোনে OTP পাঠানো হয়েছে", "otpLabel": "OTP লিখুন", "otpPlaceholder": "১২৩৪৫৬", "verify": "যাচাই করুন", "invalidOtp": "ভুল বা মেয়াদোত্তীর্ণ কোড", "logout": "লগআউট" },
+  "profile": { "title": "আমার প্রোফাইল", "name": "পূর্ণ নাম", "email": "ইমেইল (ঐচ্ছিক)", "nid": "জাতীয় পরিচয়পত্র", "dob": "জন্ম তারিখ", "language": "ভাষা", "save": "সংরক্ষণ", "saved": "প্রোফাইল আপডেট হয়েছে", "picture": "প্রোফাইল ছবি" },
+  "prescription": { "upload": "প্রেসক্রিপশন আপলোড", "image": "প্রেসক্রিপশনের ছবি", "doctor": "ডাক্তারের নাম", "hospital": "হাসপাতাল / ক্লিনিক", "diagnosis": "রোগ নির্ণয়", "date": "প্রেসক্রিপশনের তারিখ", "notes": "নোট", "medicines": "ঔষধসমূহ", "medicineName": "ঔষধের নাম", "dosage": "মাত্রা", "frequency": "ব্যবহারের নিয়ম", "duration": "সময়কাল", "timing": "সময়", "addMedicine": "+ ঔষধ যোগ করুন", "removeMedicine": "মুছুন", "submit": "প্রেসক্রিপশন সংরক্ষণ", "noPrescriptions": "এখনো কোনো প্রেসক্রিপশন নেই", "delete": "মুছুন", "confirmDelete": "আপনি কি নিশ্চিত এই প্রেসক্রিপশনটি মুছে ফেলতে চান?" },
+  "report": { "upload": "রিপোর্ট আপলোড", "image": "রিপোর্টের ছবি", "type": "রিপোর্টের ধরন", "lab": "ল্যাব / সেন্টারের নাম", "date": "রিপোর্টের তারিখ", "notes": "নোট", "submit": "রিপোর্ট সংরক্ষণ", "noReports": "এখনো কোনো রিপোর্ট নেই", "delete": "মুছুন" },
+  "reminder": { "title": "রিমাইন্ডার", "add": "রিমাইন্ডার যোগ করুন", "type": "ধরন", "medicine": "ঔষধ", "appointment": "অ্যাপয়েন্টমেন্ট", "revisit": "ফলো-আপ", "report": "রিপোর্ট", "reminderTitle": "শিরোনাম", "datetime": "তারিখ ও সময়", "repeat": "পুনরাবৃত্তি", "repeatNone": "কোনটি নয়", "repeatDaily": "প্রতিদিন", "repeatWeekly": "প্রতি সপ্তাহে", "repeatMonthly": "প্রতি মাসে", "enabled": "সক্রিয়", "save": "সংরক্ষণ", "noReminders": "কোনো রিমাইন্ডার সেট করা নেই" },
+  "settings": { "title": "সেটিংস", "language": "ভাষা", "notificationSettings": "নোটিফিকেশন সেটিংস", "notificationsNote": "কোন ধরনের রিমাইন্ডারের জন্য নোটিফিকেশন চান তা নির্বাচন করুন", "about": "সম্পর্কে", "version": "ভার্সন ১.০.০" },
+  "common": { "cancel": "বাতিল", "confirm": "নিশ্চিত", "loading": "লোড হচ্ছে...", "error": "কিছু ভুল হয়েছে", "back": "ফিরুন", "save": "সংরক্ষণ", "edit": "সম্পাদনা", "today": "আজ" }
 }

@@ -1,22 +1,11 @@
 {
-  "app": {
-    "name": "MedPrescription",
-    "tagline": "Vos ordonnances, toujours avec vous"
-  },
-  "common": {
-    "save": "Enregistrer",
-    "cancel": "Annuler",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "add": "Ajouter",
-    "search": "Rechercher",
-    "loading": "Chargement...",
-    "error": "Une erreur est survenue",
-    "retry": "Réessayer",
-    "confirm": "Confirmer",
-    "back": "Retour",
-    "next": "Suivant",
-    "done": "Terminé",
-    "close": "Fermer"
-  }
+  "app": { "name": "MedPrescription", "tagline": "Vos ordonnances, toujours avec vous" },
+  "nav": { "timeline": "Chronologie", "upload": "Téléverser", "reports": "Rapports", "reminders": "Rappels", "profile": "Profil", "settings": "Paramètres" },
+  "auth": { "phoneLabel": "Numéro de Téléphone", "phonePlaceholder": "+33XXXXXXXXX", "sendOtp": "Envoyer OTP", "otpSent": "OTP envoyé à votre téléphone", "otpLabel": "Saisir OTP", "otpPlaceholder": "123456", "verify": "Vérifier", "invalidOtp": "Code invalide ou expiré", "logout": "Déconnexion" },
+  "profile": { "title": "Mon Profil", "name": "Nom Complet", "email": "Email (facultatif)", "nid": "CNI", "dob": "Date de Naissance", "language": "Langue", "save": "Enregistrer", "saved": "Profil mis à jour", "picture": "Photo de Profil" },
+  "prescription": { "upload": "Téléverser Ordonnance", "image": "Photo de l'Ordonnance", "doctor": "Nom du Médecin", "hospital": "Hôpital / Clinique", "diagnosis": "Diagnostic", "date": "Date de Prescription", "notes": "Notes", "medicines": "Médicaments", "medicineName": "Nom du Médicament", "dosage": "Posologie", "frequency": "Fréquence", "duration": "Durée", "timing": "Horaire", "addMedicine": "+ Ajouter Médicament", "removeMedicine": "Supprimer", "submit": "Enregistrer", "noPrescriptions": "Aucune ordonnance", "delete": "Supprimer", "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette ordonnance ?" },
+  "report": { "upload": "Téléverser Rapport", "image": "Image du Rapport", "type": "Type de Rapport", "lab": "Laboratoire / Centre", "date": "Date du Rapport", "notes": "Notes", "submit": "Enregistrer", "noReports": "Aucun rapport", "delete": "Supprimer" },
+  "reminder": { "title": "Rappels", "add": "Ajouter Rappel", "type": "Type", "medicine": "Médicament", "appointment": "Rendez-vous", "revisit": "Suivi", "report": "Rapport", "reminderTitle": "Titre", "datetime": "Date et Heure", "repeat": "Répéter", "repeatNone": "Aucun", "repeatDaily": "Quotidien", "repeatWeekly": "Hebdomadaire", "repeatMonthly": "Mensuel", "enabled": "Activé", "save": "Enregistrer", "noReminders": "Aucun rappel" },
+  "settings": { "title": "Paramètres", "language": "Langue", "notificationSettings": "Paramètres de Notification", "notificationsNote": "Choisissez les types de rappel pour lesquels recevoir des notifications", "about": "À propos", "version": "Version 1.0.0" },
+  "common": { "cancel": "Annuler", "confirm": "Confirmer", "loading": "Chargement...", "error": "Une erreur est survenue", "back": "Retour", "save": "Enregistrer", "edit": "Modifier", "today": "Aujourd'hui" }
 }

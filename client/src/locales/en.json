@@ -1,22 +1,11 @@
 {
-  "app": {
-    "name": "MedPrescription",
-    "tagline": "Your prescriptions, always with you"
-  },
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "add": "Add",
-    "search": "Search",
-    "loading": "Loading...",
-    "error": "An error occurred",
-    "retry": "Retry",
-    "confirm": "Confirm",
-    "back": "Back",
-    "next": "Next",
-    "done": "Done",
-    "close": "Close"
-  }
+  "app": { "name": "MedPrescription", "tagline": "Your prescriptions, always with you" },
+  "nav": { "timeline": "Timeline", "upload": "Upload", "reports": "Reports", "reminders": "Reminders", "profile": "Profile", "settings": "Settings" },
+  "auth": { "phoneLabel": "Phone Number", "phonePlaceholder": "+8801XXXXXXXXX", "sendOtp": "Send OTP", "otpSent": "OTP sent to your phone", "otpLabel": "Enter OTP", "otpPlaceholder": "123456", "verify": "Verify", "invalidOtp": "Invalid or expired code", "logout": "Logout" },
+  "profile": { "title": "My Profile", "name": "Full Name", "email": "Email (optional)", "nid": "National ID", "dob": "Date of Birth", "language": "Language", "save": "Save", "saved": "Profile updated", "picture": "Profile Picture" },
+  "prescription": { "upload": "Upload Prescription", "image": "Prescription Photo", "doctor": "Doctor Name", "hospital": "Hospital / Clinic", "diagnosis": "Diagnosis", "date": "Prescribed Date", "notes": "Notes", "medicines": "Medicines", "medicineName": "Medicine Name", "dosage": "Dosage", "frequency": "Frequency", "duration": "Duration", "timing": "Timing", "addMedicine": "+ Add Medicine", "removeMedicine": "Remove", "submit": "Save Prescription", "noPrescriptions": "No prescriptions yet", "delete": "Delete", "confirmDelete": "Are you sure you want to delete this prescription?" },
+  "report": { "upload": "Upload Report", "image": "Report Image", "type": "Report Type", "lab": "Lab / Center Name", "date": "Report Date", "notes": "Notes", "submit": "Save Report", "noReports": "No reports yet", "delete": "Delete" },
+  "reminder": { "title": "Reminders", "add": "Add Reminder", "type": "Type", "medicine": "Medicine", "appointment": "Appointment", "revisit": "Revisit", "report": "Report", "reminderTitle": "Title", "datetime": "Date & Time", "repeat": "Repeat", "repeatNone": "None", "repeatDaily": "Daily", "repeatWeekly": "Weekly", "repeatMonthly": "Monthly", "enabled": "Enabled", "save": "Save", "noReminders": "No reminders set" },
+  "settings": { "title": "Settings", "language": "Language", "notificationSettings": "Notification Settings", "notificationsNote": "Toggle which reminder types send you notifications", "about": "About", "version": "Version 1.0.0" },
+  "common": { "cancel": "Cancel", "confirm": "Confirm", "loading": "Loading...", "error": "Something went wrong", "back": "Back", "save": "Save", "edit": "Edit", "today": "Today" }
 }
