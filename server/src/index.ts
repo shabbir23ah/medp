@@ -5,6 +5,7 @@ import { pool } from './db/pool.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import prescriptionRoutes from './routes/prescriptions.js';
+import reportRoutes from './routes/reports.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -19,6 +20,7 @@ app.use('/uploads', express.static(config.UPLOAD_DIR));
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
