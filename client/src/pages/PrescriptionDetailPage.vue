@@ -64,8 +64,13 @@ const prescription = ref<Prescription | null>(null);
 const loading = ref(true);
 
 onMounted(async () => {
-  prescription.value = await store.getPrescription(route.params.id as string);
-  loading.value = false;
+  try {
+    prescription.value = await store.getPrescription(route.params.id as string);
+  } catch {
+    // prescription stays null, error shown in template
+  } finally {
+    loading.value = false;
+  }
 });
 
 async function handleDelete() {

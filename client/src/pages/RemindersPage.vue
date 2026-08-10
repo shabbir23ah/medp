@@ -28,7 +28,7 @@
       v-for="r in store.reminders"
       :key="r.id"
       :reminder="r"
-      @toggle="store.toggleReminder($event[0], $event[1])"
+      @toggle="(id, enabled) => store.toggleReminder(id, enabled)"
       @delete="handleDelete"
     />
   </AppLayout>

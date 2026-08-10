@@ -15,7 +15,7 @@ router.use(authenticate);
 const createSchema = z.object({
   type: z.enum(['medicine', 'appointment', 'revisit', 'report']),
   title: z.string().min(1).max(200),
-  datetime: z.string().datetime(),
+  datetime: z.string().refine(val => !isNaN(Date.parse(val)), 'Invalid datetime'),
   repeatRule: z.string().optional(),
 });
 
@@ -43,7 +43,7 @@ router.get('/', async (req: AuthRequest, res) => {
 const updateSchema = z.object({
   type: z.enum(['medicine', 'appointment', 'revisit', 'report']).optional(),
   title: z.string().min(1).max(200).optional(),
-  datetime: z.string().datetime().optional(),
+  datetime: z.string().refine(val => !isNaN(Date.parse(val)), 'Invalid datetime').optional(),
   repeatRule: z.string().nullable().optional(),
   enabled: z.boolean().optional(),
 });
