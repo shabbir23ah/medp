@@ -1,12 +1,15 @@
 import express from 'express';
 import cors from 'cors';
+import cron from 'node-cron';
 import { config } from './config.js';
 import { pool } from './db/pool.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import prescriptionRoutes from './routes/prescriptions.js';
 import reportRoutes from './routes/reports.js';
+import reminderRoutes from './routes/reminders.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { processScheduledNotifications } from './services/notification.js';
 
 const app = express();
 
@@ -21,6 +24,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/reminders', reminderRoutes);
+
+// Start notification cron — checks every minute
+cron.schedule('* * * * *', () => {
+  processScheduledNotifications().catch(err =>
+    console.error('Notification cron error:', err)
+  );
+});
+console.log('Notification cron started (every 1 min)');
 
 // Health check
 app.get('/api/health', (_req, res) => {
