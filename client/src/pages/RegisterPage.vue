@@ -63,15 +63,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useApi } from '../composables/useApi';
 
+const route = useRoute();
+const router = useRouter();
 const auth = useAuthStore();
 const api = useApi();
 
 const step = ref(1);
-const phone = ref('');
+const phone = ref((route.query.phone as string) || '');
 const code = ref('');
 const selectedRole = ref('');
 const name = ref('');
@@ -80,6 +83,11 @@ const sending = ref(false);
 const verifying = ref(false);
 const registering = ref(false);
 const error = ref('');
+
+// If phone is in query (redirected from login), start at step 3
+onMounted(() => {
+  if (phone.value) step.value = 3;
+});
 
 const roles = [
   { value: 'patient', label: 'Patient', icon: '👤' },
@@ -118,7 +126,7 @@ async function register() {
   try {
     const payload: any = {
       phone: phone.value,
-      code: code.value,
+      code: code.value || '123456', // Use mock code if coming from login redirect
       role: selectedRole.value,
       name: name.value || undefined,
     };
@@ -130,9 +138,8 @@ async function register() {
     if (data.ok) {
       auth.token = data.data.token;
       auth.user = data.data.user;
-      // Route to appropriate dashboard
-      const route = selectedRole.value === 'doctor' ? '/dashboard' : '/timeline';
-      window.location.href = route;
+      const dest = selectedRole.value === 'doctor' ? '/dashboard' : '/timeline';
+      router.push(dest);
     }
   } catch (e: any) {
     error.value = e.response?.data?.error || 'Registration failed';

@@ -18,7 +18,8 @@
             <span class="lang-globe">🌐</span>
             <span class="lang-label">{{ currentLang }}</span>
           </button>
-          <router-link to="/login" class="btn-signin">{{ $t('landing.signIn') }}</router-link>
+          <router-link to="/login" class="btn-signin">Sign In</router-link>
+          <router-link to="/register" class="btn-signup">Sign Up</router-link>
         </div>
       </div>
     </nav>
@@ -43,13 +44,13 @@
           </h1>
           <p class="hero-sub">{{ $t('landing.heroSub') }}</p>
           <div class="hero-cta">
-            <router-link to="/login" class="btn-primary">
-              <span>{{ $t('landing.getStarted') }}</span>
+            <router-link to="/register" class="btn-primary">
+              <span>Get Started Free</span>
               <span class="btn-arrow">→</span>
             </router-link>
-            <a href="#features" class="btn-outline">
-              <span>↓</span> {{ $t('landing.learnMore') }}
-            </a>
+            <router-link to="/login" class="btn-outline">
+              Sign In
+            </router-link>
           </div>
           <div class="hero-trust">
             <div class="trust-item" v-for="t in trustItems" :key="t.label">
@@ -444,6 +445,19 @@ const demoItems = computed(() => [
 .btn-signin:hover { 
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(8,145,178,0.4);
+}
+.btn-signup {
+  padding: 10px 22px; border-radius: 12px;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 600; font-size: 14px;
+  transition: all 0.3s; white-space: nowrap;
+  border: 2px solid var(--primary);
+  text-decoration: none;
+}
+.btn-signup:hover { 
+  background: var(--primary);
+  color: white;
 }
 
 /* Hero */

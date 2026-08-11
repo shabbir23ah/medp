@@ -34,6 +34,7 @@ const route = useRoute();
 const auth = useAuthStore();
 
 const phone = (route.query.phone as string) || '';
+const mode = (route.query.mode as string) || '';
 const code = ref('');
 const loading = ref(false);
 const error = ref('');
@@ -43,7 +44,7 @@ async function handleVerify() {
   error.value = '';
   loading.value = true;
   try {
-    await auth.verifyOtp(phone, code.value);
+    await auth.verifyOtp(phone, code.value, mode);
   } catch (err: any) {
     error.value = err.response?.data?.error || 'Verification failed';
   } finally {
