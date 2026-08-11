@@ -90,7 +90,7 @@ const navItems = computed(() => {
     ];
   }
   return [
-    { to: '/timeline', icon: '🏠', label: 'Timeline' },
+    { to: '/home', icon: '🏠', label: 'Home' },
     { to: '/doctors', icon: '👨‍⚕️', label: 'Find Doctor' },
     { to: '/appointments', icon: '📅', label: 'Appointments' },
     { to: '/upload', icon: '➕', label: 'Upload' },
