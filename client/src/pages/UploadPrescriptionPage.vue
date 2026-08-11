@@ -1,49 +1,80 @@
 <template>
-  <AppLayout :title="$t('prescription.upload')">
+  <AppLayout>
+    <div class="page-hero">
+      <h1>New Prescription</h1>
+      <p>Upload a photo or enter the details manually.</p>
+    </div>
+
     <form @submit.prevent="handleSubmit" class="form">
-      <FileUpload v-model="image" :label="$t('prescription.image')" />
-
-      <label>{{ $t('prescription.doctor') }}</label>
-      <input v-model="form.doctor_name" class="input" />
-
-      <label>{{ $t('prescription.hospital') }}</label>
-      <input v-model="form.hospital" class="input" />
-
-      <label>{{ $t('prescription.date') }}</label>
-      <input v-model="form.prescribed_date" type="date" class="input" />
-
-      <label>{{ $t('prescription.diagnosis') }}</label>
-      <textarea v-model="form.diagnosis" class="input" rows="2"></textarea>
-
-      <label>{{ $t('prescription.notes') }}</label>
-      <textarea v-model="form.notes" class="input" rows="2"></textarea>
-
-      <!-- Dynamic medicines -->
-      <div class="medicines-section">
-        <h3>💊 {{ $t('prescription.medicines') }}</h3>
-        <div v-for="(med, i) in medicines" :key="i" class="medicine-form">
-          <input v-model="med.name" :placeholder="$t('prescription.medicineName')" class="input" />
-          <div class="med-row">
-            <input v-model="med.dosage" :placeholder="$t('prescription.dosage')" class="input small" />
-            <input v-model="med.frequency" :placeholder="$t('prescription.frequency')" class="input small" />
-          </div>
-          <div class="med-row">
-            <input v-model="med.duration" :placeholder="$t('prescription.duration')" class="input small" />
-            <input v-model="med.timing" :placeholder="$t('prescription.timing')" class="input small" />
-          </div>
-          <button type="button" @click="removeMedicine(i)" class="btn-remove">
-            {{ $t('prescription.removeMedicine') }}
-          </button>
-        </div>
-        <button type="button" @click="addMedicine" class="btn-add">
-          {{ $t('prescription.addMedicine') }}
-        </button>
+      <!-- Image Upload -->
+      <div class="section-card">
+        <h3>📸 Prescription Photo</h3>
+        <FileUpload v-model="image" label="Tap to upload or drag & drop" />
       </div>
 
-      <button type="submit" :disabled="!image || submitting" class="btn-primary">
-        {{ submitting ? $t('common.loading') : $t('prescription.submit') }}
+      <!-- Doctor & Location -->
+      <div class="section-card">
+        <h3>👨‍⚕️ Doctor Details</h3>
+        <div class="field-row">
+          <div class="field">
+            <label>Doctor Name</label>
+            <input v-model="form.doctor_name" placeholder="e.g. Dr. Sarah Chen" />
+          </div>
+          <div class="field">
+            <label>Hospital / Clinic</label>
+            <input v-model="form.hospital" placeholder="e.g. Dhaka Medical" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Prescribed Date</label>
+          <input v-model="form.prescribed_date" type="date" />
+        </div>
+      </div>
+
+      <!-- Diagnosis -->
+      <div class="section-card">
+        <h3>🩺 Medical Details</h3>
+        <div class="field">
+          <label>Diagnosis</label>
+          <textarea v-model="form.diagnosis" placeholder="What was diagnosed?" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>Notes</label>
+          <textarea v-model="form.notes" placeholder="Any additional notes..." rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- Medicines -->
+      <div class="section-card">
+        <div class="section-header-row">
+          <h3>💊 Medicines</h3>
+          <button type="button" @click="addMedicine" class="add-med-btn">+ Add</button>
+        </div>
+
+        <div v-if="medicines.length === 0" class="empty-meds">
+          <p>No medicines added yet. Tap "+ Add" to include prescribed medicines.</p>
+        </div>
+
+        <div v-for="(med, i) in medicines" :key="i" class="med-block">
+          <div class="med-header">
+            <span class="med-num">Medicine {{ i + 1 }}</span>
+            <button type="button" @click="removeMedicine(i)" class="remove-btn">✕</button>
+          </div>
+          <input v-model="med.name" placeholder="Medicine name" class="med-name-input" />
+          <div class="med-grid">
+            <input v-model="med.dosage" placeholder="Dosage" />
+            <input v-model="med.frequency" placeholder="Frequency" />
+            <input v-model="med.duration" placeholder="Duration" />
+            <input v-model="med.timing" placeholder="Timing" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" :disabled="!image || submitting" class="btn-submit">
+        {{ submitting ? 'Saving...' : 'Save Prescription' }}
       </button>
-      <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="error" class="error-msg">{{ error }}</p>
     </form>
   </AppLayout>
 </template>
@@ -70,15 +101,8 @@ const form = reactive({
   notes: '',
 });
 
-interface MedicineForm {
-  name: string;
-  dosage: string;
-  frequency: string;
-  duration: string;
-  timing: string;
-}
-
-const medicines = ref<MedicineForm[]>([]);
+interface Med { name: string; dosage: string; frequency: string; duration: string; timing: string; }
+const medicines = ref<Med[]>([]);
 
 function addMedicine() {
   medicines.value.push({ name: '', dosage: '', frequency: '', duration: '', timing: '' });
@@ -122,25 +146,92 @@ async function handleSubmit() {
 </script>
 
 <style scoped>
-.form { display: flex; flex-direction: column; gap: 12px; }
-label { font-weight: 500; font-size: 14px; }
-.input {
-  padding: 10px 14px;
-  border: 2px solid var(--color-border);
-  border-radius: 8px;
-  outline: none;
-  font-size: 15px;
+.page-hero { margin-bottom: 24px; }
+.page-hero h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 4px; }
+.page-hero p { font-size: 14px; color: var(--text-muted); }
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
 }
-.input:focus { border-color: var(--color-primary); }
-.small { flex: 1; }
-.med-row { display: flex; gap: 8px; margin-top: 6px; }
-.medicines-section { background: var(--color-surface); border-radius: var(--radius); padding: 16px; }
-.medicines-section h3 { margin-bottom: 12px; }
-.medicine-form { padding: 12px 0; border-bottom: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 6px; }
-.medicine-form:last-child { border-bottom: none; }
-.btn-add { width: 100%; padding: 10px; background: none; border: 2px dashed var(--color-primary); border-radius: 8px; color: var(--color-primary); margin-top: 8px; }
-.btn-remove { width: 100%; padding: 8px; background: none; color: var(--color-danger); font-size: 13px; }
-.btn-primary { padding: 14px; background: var(--color-primary); color: white; border-radius: 8px; font-weight: 600; font-size: 16px; margin-top: 8px; }
-.btn-primary:disabled { opacity: 0.5; }
-.error { color: var(--color-danger); text-align: center; }
+.section-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.section-header-row h3 { margin-bottom: 0; }
+
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+.field input, .field textarea, .field select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+.field input:focus, .field textarea:focus { border-color: var(--primary); outline: none; }
+.field textarea { resize: vertical; font-family: inherit; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.add-med-btn {
+  padding: 8px 16px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  transition: transform 0.15s;
+}
+.add-med-btn:hover { transform: scale(1.03); }
+
+.empty-meds {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.med-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.med-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.med-num { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+.remove-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--danger-bg); color: var(--danger); font-size: 13px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.med-name-input { margin-bottom: 10px; }
+.med-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.med-grid input {
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text);
+}
+.med-grid input:focus { border-color: var(--primary); outline: none; }
+
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--primary-text);
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.2px;
+  box-shadow: 0 4px 20px rgba(13,148,136,0.25);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-submit:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(13,148,136,0.35); }
+.error-msg { text-align: center; color: var(--danger); font-size: 14px; font-weight: 600; }
 </style>

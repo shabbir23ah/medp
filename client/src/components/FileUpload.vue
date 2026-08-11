@@ -57,37 +57,34 @@ function clear() {
 
 <style scoped>
 .file-upload {
-  border: 2px dashed var(--color-border);
-  border-radius: var(--radius);
-  padding: 32px;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 40px 20px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
   position: relative;
-  min-height: 150px;
+  min-height: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  color: var(--color-text-muted);
+  gap: 10px;
+  color: var(--text-muted);
+  background: var(--bg);
 }
-.file-upload:hover { border-color: var(--color-primary); }
-.has-file { border-style: solid; padding: 0; min-height: auto; }
-.preview { width: 100%; max-height: 300px; object-fit: contain; border-radius: var(--radius); }
+.file-upload:hover { border-color: var(--primary); background: var(--primary-bg); }
+.has-file { border-style: solid; border-color: var(--primary); padding: 0; min-height: auto; background: var(--surface); }
+.preview { width: 100%; max-height: 300px; object-fit: contain; border-radius: 14px; }
 .clear-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  top: 10px; right: 10px;
+  width: 30px; height: 30px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
+  background: rgba(0,0,0,0.5); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
 }
-.upload-icon { font-size: 32px; }
+.clear-btn:hover { background: var(--danger); }
+.upload-icon { font-size: 36px; }
 </style>
