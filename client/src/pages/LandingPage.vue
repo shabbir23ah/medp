@@ -7,7 +7,7 @@
     <div class="bg-grid"></div>
 
     <!-- Nav -->
-    <nav class="nav" ref="navRef">
+    <nav class="nav" :class="{ scrolled: isScrolled }">
       <div class="nav-inner">
         <div class="brand">
           <span class="brand-icon">💊</span>
@@ -15,7 +15,8 @@
         </div>
         <div class="nav-actions">
           <button class="btn-lang" @click="cycleLang">
-            <span>🌐</span> {{ currentLang }}
+            <span class="lang-globe">🌐</span>
+            <span class="lang-label">{{ currentLang }}</span>
           </button>
           <router-link to="/login" class="btn-signin">{{ $t('landing.signIn') }}</router-link>
         </div>
@@ -96,9 +97,9 @@
     </section>
 
     <!-- Stats -->
-    <section class="stats">
+    <section class="stats reveal">
       <div class="stats-inner">
-        <div class="stat-card" v-for="s in statsItems" :key="s.label">
+        <div class="stat-card reveal reveal-delay-1" v-for="s in statsItems" :key="s.label">
           <span class="stat-icon">{{ s.icon }}</span>
           <span class="stat-value">{{ s.value }}</span>
           <span class="stat-label">{{ s.label }}</span>
@@ -108,13 +109,13 @@
 
     <!-- Features -->
     <section id="features" class="features">
-      <div class="section-header">
+      <div class="section-header reveal">
         <span class="section-tag">{{ $t('landing.featuresTag') }}</span>
         <h2>{{ $t('landing.featuresTitle') }}</h2>
         <p>{{ $t('landing.featuresSub') }}</p>
       </div>
       <div class="features-grid">
-        <div class="feature-card" v-for="(feat, i) in features" :key="i">
+        <div class="feature-card reveal reveal-delay-1" v-for="(feat, i) in features" :key="i" :style="{ transitionDelay: (0.1 * (i + 1)) + 's' }">
           <div class="feature-blur"></div>
           <div class="feature-icon-wrap">
             <span class="feature-icon">{{ feat.icon }}</span>
@@ -128,13 +129,13 @@
     <!-- How It Works -->
     <section class="how">
       <div class="how-bg"></div>
-      <div class="section-header">
+      <div class="section-header reveal">
         <span class="section-tag dark">{{ $t('landing.howTag') }}</span>
         <h2>{{ $t('landing.howTitle') }}</h2>
       </div>
       <div class="steps">
         <div class="step-line"></div>
-        <div class="step" v-for="(step, i) in steps" :key="i">
+        <div class="step reveal" v-for="(step, i) in steps" :key="i" :style="{ transitionDelay: (0.15 * i) + 's' }">
           <div class="step-num-wrap">
             <div class="step-num">{{ i + 1 }}</div>
           </div>
@@ -150,7 +151,7 @@
     <!-- Demo -->
     <section class="demo">
       <div class="demo-inner">
-        <div class="demo-content">
+        <div class="demo-content reveal">
           <span class="section-tag">{{ $t('landing.demoTag') }}</span>
           <h2>{{ $t('landing.demoTitle') }}</h2>
           <p>{{ $t('landing.demoSub') }}</p>
@@ -160,7 +161,7 @@
             </li>
           </ul>
         </div>
-        <div class="demo-visual">
+        <div class="demo-visual reveal reveal-delay-2">
           <div class="demo-mockup">
             <div class="demo-header"></div>
             <div class="demo-body">
@@ -224,11 +225,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { availableLocales } from '../locales';
 
 const { t, locale } = useI18n();
+
+const isScrolled = ref(false);
+
+function onScroll() {
+  isScrolled.value = window.scrollY > 20;
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true });
+  
+  // Scroll-reveal observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+});
+onUnmounted(() => window.removeEventListener('scroll', onScroll));
 
 const currentLang = computed(() => {
   return availableLocales.find(l => l.code === locale.value)?.nativeName || 'English';
@@ -292,6 +315,25 @@ const demoItems = computed(() => [
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeSlide { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+/* Scroll reveal utility */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
 </style>
 
 <style scoped>
@@ -363,35 +405,46 @@ const demoItems = computed(() => [
 /* Nav */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 12px 0;
-  transition: all 0.3s;
+  padding: 4px 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .nav.scrolled {
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.82);
   backdrop-filter: blur(24px);
-  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  padding: 2px 0;
 }
 .nav-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  max-width: 1200px; margin: 0 auto; padding: 14px 28px;
   display: flex; justify-content: space-between; align-items: center;
+  gap: 16px;
 }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--c-text); }
+.nav.scrolled .nav-inner { padding: 10px 28px; }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--c-text); flex-shrink: 0; }
 .brand-icon { font-size: 28px; }
+.nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .btn-lang {
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 14px; border-radius: 10px;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 9px 13px; border-radius: 10px;
   background: var(--c-surface); border: 1.5px solid var(--c-border);
   font-size: 13px; font-weight: 500; color: var(--c-muted);
-  transition: all 0.2s;
+  transition: all 0.2s; white-space: nowrap;
 }
-.btn-lang:hover { border-color: var(--c-primary); color: var(--c-primary); }
+.btn-lang:hover { border-color: var(--c-primary); color: var(--c-primary); background: rgba(8,145,178,0.03); }
+.lang-globe { font-size: 14px; }
+.lang-label { max-width: 60px; overflow: hidden; text-overflow: ellipsis; }
 .btn-signin {
   padding: 10px 22px; border-radius: 12px;
-  background: var(--c-primary); color: #fff;
-  font-weight: 600; font-size: 14px;
-  transition: all 0.2s;
+  background: linear-gradient(135deg, var(--c-primary), var(--c-accent));
+  color: #fff; font-weight: 600; font-size: 14px;
+  transition: all 0.3s; white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(8,145,178,0.25);
 }
-.btn-signin:hover { background: var(--c-primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,145,178,0.3); }
+.btn-signin:hover { 
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(8,145,178,0.4);
+}
 
 /* Hero */
 .hero {
@@ -507,12 +560,22 @@ const demoItems = computed(() => [
 
 /* Hero Visual - Floating Phone */
 .hero-visual { flex: 1; display: flex; justify-content: center; position: relative; max-width: 480px; }
-.floating-phone { position: relative; animation: float1 20s ease-in-out infinite; }
+.floating-phone { 
+  position: relative;
+  animation: phoneFloat 6s ease-in-out infinite;
+}
+@keyframes phoneFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
+}
 .phone-frame {
   width: 260px; height: 520px;
   background: linear-gradient(180deg, #1e293b, #0f172a);
   border-radius: 36px; padding: 10px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.2), 0 0 0 3px #334155;
+  box-shadow: 
+    0 30px 60px rgba(0,0,0,0.2), 
+    0 0 0 3px #334155,
+    inset 0 0 0 1px rgba(255,255,255,0.05);
   position: relative;
 }
 .phone-notch {
@@ -545,10 +608,22 @@ const demoItems = computed(() => [
   background: #fff; border-radius: 12px; padding: 10px;
   display: flex; gap: 10px; align-items: center;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  animation: slideUp 0.5s ease both;
+  animation: cardSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.app-card:nth-child(2) { animation-delay: 0.15s; }
+.app-card:nth-child(3) { animation-delay: 0.3s; }
+.app-card:nth-child(4) { animation-delay: 0.45s; }
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 .card-thumb {
   width: 40px; height: 44px; border-radius: 8px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.card-thumb::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
 }
 .grad-1 { background: linear-gradient(135deg, #0891b2, #06b6d4); }
 .grad-2 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
@@ -561,27 +636,32 @@ const demoItems = computed(() => [
 /* Floating badges */
 .float-badge {
   position: absolute;
-  padding: 8px 14px; border-radius: 12px;
+  padding: 9px 15px; border-radius: 14px;
   font-size: 12px; font-weight: 600;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
   white-space: nowrap;
-  animation: float3 6s ease-in-out infinite;
   display: flex; align-items: center; gap: 6px;
+  background: #fff;
+  pointer-events: none;
 }
 .badge-reminder {
-  top: 40px; right: -80px;
-  background: #fff; color: var(--c-rose);
-  animation-delay: 0s;
+  top: 50px; right: -90px;
+  color: var(--c-rose);
+  animation: badgeFloat 4s ease-in-out 0s infinite;
 }
 .badge-upload {
-  bottom: 80px; left: -90px;
-  background: #fff; color: var(--c-green);
-  animation-delay: 2s;
+  bottom: 100px; left: -100px;
+  color: var(--c-green);
+  animation: badgeFloat 4s ease-in-out 1.3s infinite;
 }
 .badge-search {
-  top: 50%; right: -70px;
-  background: #fff; color: var(--c-purple);
-  animation-delay: 4s;
+  top: 45%; right: -75px;
+  color: var(--c-purple);
+  animation: badgeFloat 4s ease-in-out 2.6s infinite;
+}
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0px); opacity: 1; }
+  50% { transform: translateY(-10px); opacity: 0.85; }
 }
 
 .hero-wave {
