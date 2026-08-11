@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-container">
+  <div class="mobile-nav">
     <nav class="pill-nav">
       <router-link
         v-for="item in items"
@@ -44,7 +44,8 @@ const items = computed(() => {
 </script>
 
 <style scoped>
-.nav-container {
+.mobile-nav {
+  display: block;
   position: fixed;
   bottom: 12px;
   left: 50%;
@@ -75,7 +76,6 @@ const items = computed(() => {
   color: var(--text-muted);
   text-decoration: none;
   transition: all 0.2s;
-  position: relative;
 }
 .nav-item.active {
   color: var(--primary);
@@ -83,4 +83,8 @@ const items = computed(() => {
 }
 .nav-icon { font-size: 20px; line-height: 1; }
 .nav-label { font-size: 10px; font-weight: 600; }
+
+@media (min-width: 768px) {
+  .mobile-nav { display: none; }
+}
 </style>
