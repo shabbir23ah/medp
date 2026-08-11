@@ -12,6 +12,7 @@ interface User {
   dob: string | null;
   profilePic: string | null;
   language: string;
+  role: string;
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -20,6 +21,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!token.value);
   const isProfileComplete = computed(() => !!user.value?.name);
+  const isDoctor = computed(() => user.value?.role === 'doctor');
+  const isPatient = computed(() => !user.value?.role || user.value.role === 'patient');
 
   function persist() {
     if (token.value) localStorage.setItem('token', token.value);

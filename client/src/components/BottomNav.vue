@@ -10,16 +10,28 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '../stores/auth';
 
 const { t } = useI18n();
+const auth = useAuthStore();
 
-const items = computed(() => [
-  { to: '/timeline', icon: '🏠', label: t('nav.timeline') },
-  { to: '/upload', icon: '➕', label: t('nav.upload') },
-  { to: '/reports', icon: '📋', label: t('nav.reports') },
-  { to: '/reminders', icon: '⏰', label: t('nav.reminders') },
-  { to: '/profile', icon: '👤', label: t('nav.profile') },
-]);
+const items = computed(() => {
+  if (auth.isDoctor) {
+    return [
+      { to: '/dashboard', icon: '📊', label: t('nav.dashboard') },
+      { to: '/appointments', icon: '📅', label: t('nav.appointments') },
+      { to: '/reminders', icon: '⏰', label: t('nav.reminders') },
+      { to: '/profile', icon: '👤', label: t('nav.profile') },
+    ];
+  }
+  return [
+    { to: '/timeline', icon: '🏠', label: t('nav.timeline') },
+    { to: '/doctors', icon: '👨‍⚕️', label: t('nav.doctors') },
+    { to: '/appointments', icon: '📅', label: t('nav.appointments') },
+    { to: '/upload', icon: '➕', label: t('nav.upload') },
+    { to: '/profile', icon: '👤', label: t('nav.profile') },
+  ];
+});
 </script>
 
 <style scoped>

@@ -11,6 +11,12 @@ const router = createRouter({
       meta: { guest: true },
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('../pages/RegisterPage.vue'),
+      meta: { guest: true },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../pages/LoginPage.vue'),
@@ -62,6 +68,37 @@ const router = createRouter({
       path: '/settings',
       name: 'settings',
       component: () => import('../pages/SettingsPage.vue'),
+      meta: { auth: true },
+    },
+    // Doctor routes
+    {
+      path: '/doctors',
+      name: 'doctors',
+      component: () => import('../pages/DoctorListPage.vue'),
+      meta: { auth: true },
+    },
+    {
+      path: '/doctors/:id',
+      name: 'doctor-profile',
+      component: () => import('../pages/DoctorProfilePage.vue'),
+      meta: { auth: true },
+    },
+    {
+      path: '/appointments',
+      name: 'appointments',
+      component: () => import('../pages/AppointmentsPage.vue'),
+      meta: { auth: true },
+    },
+    {
+      path: '/chat/:appointmentId',
+      name: 'chat',
+      component: () => import('../pages/ChatPage.vue'),
+      meta: { auth: true },
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../pages/DoctorDashboard.vue'),
       meta: { auth: true },
     },
     {
