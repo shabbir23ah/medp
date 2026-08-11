@@ -27,18 +27,25 @@ const auth = useAuthStore();
 const items = computed(() => {
   if (auth.isDoctor) {
     return [
-      { to: '/dashboard', icon: '📊', label: t('nav.dashboard') },
-      { to: '/appointments', icon: '📅', label: t('nav.appointments') },
-      { to: '/reminders', icon: '⏰', label: t('nav.reminders') },
-      { to: '/profile', icon: '👤', label: t('nav.profile') },
+      { to: '/dashboard', icon: '📊', label: 'Dashboard' },
+      { to: '/appointments', icon: '📅', label: 'Appointments' },
+      { to: '/reminders', icon: '⏰', label: 'Reminders' },
+      { to: '/profile', icon: '👤', label: 'Profile' },
+    ];
+  }
+  if (auth.user?.role === 'pharmacy') {
+    return [
+      { to: '/pharmacy', icon: '💊', label: 'Catalog' },
+      { to: '/reminders', icon: '⏰', label: 'Reminders' },
+      { to: '/profile', icon: '👤', label: 'Profile' },
     ];
   }
   return [
-    { to: '/timeline', icon: '🏠', label: t('nav.timeline') },
-    { to: '/doctors', icon: '👨‍⚕️', label: t('nav.doctors') },
-    { to: '/appointments', icon: '📅', label: t('nav.appointments') },
-    { to: '/upload', icon: '➕', label: t('nav.upload') },
-    { to: '/profile', icon: '👤', label: t('nav.profile') },
+    { to: '/timeline', icon: '🏠', label: 'Timeline' },
+    { to: '/doctors', icon: '👨‍⚕️', label: 'Doctors' },
+    { to: '/appointments', icon: '📅', label: 'Appts' },
+    { to: '/upload', icon: '➕', label: 'Upload' },
+    { to: '/profile', icon: '👤', label: 'Profile' },
   ];
 });
 </script>

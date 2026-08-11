@@ -78,16 +78,22 @@ const greeting = computed(() => {
 const navItems = computed(() => {
   if (auth.isDoctor) {
     return [
-      { to: '/dashboard', icon: '📊', label: t('nav.dashboard') },
-      { to: '/appointments', icon: '📅', label: t('nav.appointments') },
-      { to: '/reminders', icon: '⏰', label: t('nav.reminders') },
+      { to: '/dashboard', icon: '📊', label: 'Dashboard' },
+      { to: '/appointments', icon: '📅', label: 'Appointments' },
+      { to: '/reminders', icon: '⏰', label: 'Reminders' },
+    ];
+  }
+  if (auth.user?.role === 'pharmacy') {
+    return [
+      { to: '/pharmacy', icon: '💊', label: 'Catalog' },
+      { to: '/reminders', icon: '⏰', label: 'Reminders' },
     ];
   }
   return [
-    { to: '/timeline', icon: '🏠', label: t('nav.timeline') },
-    { to: '/doctors', icon: '👨‍⚕️', label: t('nav.doctors') },
-    { to: '/appointments', icon: '📅', label: t('nav.appointments') },
-    { to: '/upload', icon: '➕', label: t('nav.upload') },
+    { to: '/timeline', icon: '🏠', label: 'Timeline' },
+    { to: '/doctors', icon: '👨‍⚕️', label: 'Find Doctor' },
+    { to: '/appointments', icon: '📅', label: 'Appointments' },
+    { to: '/upload', icon: '➕', label: 'Upload' },
   ];
 });
 </script>
