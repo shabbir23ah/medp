@@ -5,6 +5,12 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      name: 'landing',
+      component: () => import('../pages/LandingPage.vue'),
+      meta: { guest: true },
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../pages/LoginPage.vue'),
@@ -60,7 +66,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/timeline',
+      redirect: '/',
     },
   ],
 });
@@ -73,6 +79,7 @@ router.beforeEach((to, _from) => {
   }
 
   if (to.meta.guest && auth.isAuthenticated) {
+    if (to.name === 'landing') return true; // allow landing even when logged in
     return '/timeline';
   }
 });
