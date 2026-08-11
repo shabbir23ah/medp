@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { upload } from '../middleware/upload.js';
+import { pool } from '../db/pool.js';
 import {
   createPrescription,
   getPrescriptions,
@@ -97,6 +98,61 @@ router.delete('/:id', async (req: AuthRequest, res) => {
     return;
   }
   res.json({ ok: true });
+});
+
+// POST /api/prescriptions/push — doctor pushes prescription to patient
+const pushSchema = z.object({
+  patientId: z.string().uuid(),
+  doctorName: z.string().max(200).optional(),
+  hospital: z.string().max(300).optional(),
+  diagnosis: z.string().optional(),
+  prescribedDate: z.string().optional(),
+  notes: z.string().optional(),
+  medicines: z.array(z.object({
+    name: z.string().min(1),
+    dosage: z.string().optional(),
+    frequency: z.string().optional(),
+    duration: z.string().optional(),
+    timing: z.string().optional(),
+  })).optional(),
+});
+
+router.post('/push', async (req: AuthRequest, res) => {
+  if (req.userRole !== 'doctor') {
+    res.status(403).json({ ok: false, error: 'Only doctors can push prescriptions' });
+    return;
+  }
+
+  const parsed = pushSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, error: parsed.error.errors[0].message });
+    return;
+  }
+
+  // Get doctor's name
+  const doctorResult = await pool.query(
+    'SELECT name FROM users WHERE id = $1', [req.userId]
+  );
+  const doctorName = parsed.data.doctorName || doctorResult.rows[0]?.name || 'Doctor';
+
+  const prescription = await createPrescription({
+    userId: parsed.data.patientId,
+    imageUrl: '',
+    doctorName,
+    hospital: parsed.data.hospital,
+    diagnosis: parsed.data.diagnosis,
+    prescribedDate: parsed.data.prescribedDate,
+    notes: parsed.data.notes,
+    medicines: parsed.data.medicines,
+  });
+
+  // Set doctor_id on the prescription
+  await pool.query(
+    'UPDATE prescriptions SET doctor_id = $1 WHERE id = $2',
+    [req.userId, prescription.id]
+  );
+
+  res.status(201).json({ ok: true, data: prescription });
 });
 
 export default router;

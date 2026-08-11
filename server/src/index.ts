@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { createServer } from 'http';
 import cron from 'node-cron';
 import { config } from './config.js';
 import { pool } from './db/pool.js';
@@ -13,6 +14,7 @@ import appointmentRoutes from './routes/appointments.js';
 import chatRoutes from './routes/chat.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { processScheduledNotifications } from './services/notification.js';
+import { initSocket } from './socket.js';
 
 const app = express();
 
@@ -52,7 +54,9 @@ app.use(errorHandler);
 pool.query('SELECT 1')
   .then(() => {
     console.log('Database connected');
-    app.listen(config.PORT, () => {
+    const httpServer = createServer(app);
+    initSocket(httpServer);
+    httpServer.listen(config.PORT, () => {
       console.log(`Server running on http://localhost:${config.PORT}`);
     });
   })
