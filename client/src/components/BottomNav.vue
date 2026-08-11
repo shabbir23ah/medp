@@ -1,10 +1,19 @@
 <template>
-  <nav class="bottom-nav">
-    <router-link v-for="item in items" :key="item.to" :to="item.to" class="nav-item" active-class="active">
-      <span class="nav-icon">{{ item.icon }}</span>
-      <span class="nav-label">{{ item.label }}</span>
-    </router-link>
-  </nav>
+  <div class="nav-container">
+    <nav class="pill-nav">
+      <router-link
+        v-for="item in items"
+        :key="item.to"
+        :to="item.to"
+        class="nav-item"
+        active-class="active"
+        exact
+      >
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </router-link>
+    </nav>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -35,28 +44,41 @@ const items = computed(() => {
 </script>
 
 <style scoped>
-.bottom-nav {
+.nav-container {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  justify-content: space-around;
-  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 100;
+  padding: 0 16px;
+  width: 100%;
+  max-width: 480px;
+}
+.pill-nav {
+  display: flex;
+  background: var(--color-surface);
+  border-radius: 20px;
+  padding: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--color-border);
 }
 .nav-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 4px 12px;
+  padding: 8px 4px;
+  border-radius: 16px;
   color: var(--color-text-muted);
-  transition: color 0.2s;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
 }
-.nav-item.active { color: var(--color-primary); }
-.nav-icon { font-size: 22px; }
-.nav-label { font-size: 11px; font-weight: 500; }
+.nav-item.active {
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+.nav-icon { font-size: 20px; line-height: 1; }
+.nav-label { font-size: 10px; font-weight: 600; }
 </style>
