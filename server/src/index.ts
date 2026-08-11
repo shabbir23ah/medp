@@ -8,6 +8,9 @@ import userRoutes from './routes/user.js';
 import prescriptionRoutes from './routes/prescriptions.js';
 import reportRoutes from './routes/reports.js';
 import reminderRoutes from './routes/reminders.js';
+import doctorRoutes from './routes/doctors.js';
+import appointmentRoutes from './routes/appointments.js';
+import chatRoutes from './routes/chat.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { processScheduledNotifications } from './services/notification.js';
 
@@ -25,6 +28,9 @@ app.use('/api/user', userRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/reminders', reminderRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Start notification cron — checks every minute
 cron.schedule('* * * * *', () => {

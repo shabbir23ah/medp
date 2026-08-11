@@ -35,6 +35,7 @@ router.get('/profile', async (req: AuthRequest, res) => {
       dob: user.dob,
       profilePic: user.profile_pic,
       language: user.language,
+      role: user.role,
     },
   });
 });

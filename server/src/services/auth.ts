@@ -10,6 +10,7 @@ export interface UserRow {
   dob: string | null;
   profile_pic: string | null;
   language: string;
+  role: string;
   created_at: string;
   updated_at: string;
 }
