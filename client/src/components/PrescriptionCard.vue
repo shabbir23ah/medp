@@ -27,7 +27,6 @@
 
 <script setup lang="ts">
 import type { Prescription } from '../stores/prescriptions';
-
 defineProps<{ prescription: Prescription }>();
 
 function formatDate(dateStr: string): string {
@@ -44,124 +43,46 @@ function formatDate(dateStr: string): string {
 
 <style scoped>
 .card {
-  display: flex;
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
+  display: flex; align-items: stretch;
+  background: var(--surface);
+  border-radius: 16px;
   margin-bottom: 10px;
-  color: var(--color-text);
+  color: var(--text);
   text-decoration: none;
   overflow: hidden;
-  transition: box-shadow 0.2s, transform 0.2s;
-  border: 1px solid var(--color-border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border);
 }
-.card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.card:active { transform: scale(0.985); }
 .card-accent {
   width: 4px;
-  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(180deg, var(--primary), var(--primary-light));
   flex-shrink: 0;
 }
-.card-body {
-  flex: 1;
-  padding: 16px;
-  min-width: 0;
-}
+.card-body { flex: 1; padding: 16px; min-width: 0; }
 .card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 10px;
 }
-.doctor-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
+.doctor-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .doctor-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-primary-bg), var(--color-primary-bg));
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  flex-shrink: 0;
-  border: 1.5px solid rgba(13,148,136,0.15);
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--primary-bg); color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; flex-shrink: 0;
 }
-.doctor {
-  font-weight: 600;
-  font-size: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.hospital {
-  font-size: 12px;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+.doctor { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hospital { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .date-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--color-primary);
-  background: var(--color-primary-bg);
-  padding: 4px 10px;
-  border-radius: 8px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-size: 11px; font-weight: 600; color: var(--primary);
+  background: var(--primary-bg); padding: 4px 10px;
+  border-radius: 8px; white-space: nowrap; flex-shrink: 0;
 }
-.card-meta {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-  margin-bottom: 8px;
-}
-.meta-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-.meta-value {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.card-footer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border);
-}
-.pill-count {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-}
-.med-names {
-  font-size: 12px;
-  color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.card-arrow {
-  display: flex;
-  align-items: center;
-  padding: 0 12px;
-  color: var(--color-text-muted);
-  font-size: 18px;
-}
+.card-meta { display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px; }
+.meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; }
+.meta-value { font-size: 13px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-footer { display: flex; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid var(--border-light); }
+.pill-count { font-size: 12px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+.med-names { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-arrow { display: flex; align-items: center; padding: 0 12px; color: var(--text-muted); font-size: 18px; }
 </style>

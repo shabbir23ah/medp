@@ -29,10 +29,10 @@ function formatDateTime(dt: string): string {
 </script>
 
 <style scoped>
-.card { display: flex; align-items: center; background: var(--color-surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; margin-bottom: 10px; }
+.card { display: flex; align-items: center; background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
 .disabled { opacity: 0.5; }
 .info { flex: 1; }
-.type-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-bottom: 6px; }
+.type-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
 .type-badge.medicine { background: #dbeafe; color: #1d4ed8; }
 .type-badge.appointment { background: #fce7f3; color: #be185d; }
 .type-badge.revisit { background: #d1fae5; color: #047857; }

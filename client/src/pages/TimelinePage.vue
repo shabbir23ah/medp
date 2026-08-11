@@ -1,13 +1,13 @@
 <template>
   <AppLayout>
-    <div class="timeline-header">
-      <h1>Your Timeline</h1>
+    <div class="header-row">
+      <h1 class="page-title">Your Timeline</h1>
       <router-link to="/upload" class="add-btn">+ New</router-link>
     </div>
 
     <div v-if="store.loading && store.prescriptions.length === 0" class="state">
       <div class="spinner"></div>
-      <p>Loading your prescriptions...</p>
+      <p>Loading...</p>
     </div>
 
     <div v-else-if="store.prescriptions.length === 0" class="state">
@@ -18,21 +18,9 @@
     </div>
 
     <template v-else>
-      <div class="timeline-connector"></div>
-      <PrescriptionCard
-        v-for="(p, i) in store.prescriptions"
-        :key="p.id"
-        :prescription="p"
-        :style="{ animationDelay: (i * 0.05) + 's' }"
-        class="card-anim"
-      />
-
-      <button
-        v-if="store.prescriptions.length < store.total"
-        @click="loadMore"
-        class="load-more"
-      >
-        Load older prescriptions
+      <PrescriptionCard v-for="p in store.prescriptions" :key="p.id" :prescription="p" />
+      <button v-if="store.prescriptions.length < store.total" @click="loadMore" class="load-more">
+        Load older
       </button>
     </template>
   </AppLayout>
@@ -46,80 +34,25 @@ import { usePrescriptionsStore } from '../stores/prescriptions';
 import { subscribeToPush } from '../composables/useNotifications';
 
 const store = usePrescriptionsStore();
-
-onMounted(() => {
-  store.fetchPrescriptions();
-  subscribeToPush();
-});
-
-function loadMore() {
-  store.fetchPrescriptions(store.page + 1);
-}
+onMounted(() => { store.fetchPrescriptions(); subscribeToPush(); });
+function loadMore() { store.fetchPrescriptions(store.page + 1); }
 </script>
 
 <style scoped>
-.timeline-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-.timeline-header h1 {
-  font-size: 22px;
-  font-weight: 700;
-}
+.header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.page-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
 .add-btn {
-  padding: 8px 16px;
-  background: var(--color-primary);
-  color: white;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
+  padding: 10px 18px; background: var(--primary); color: var(--primary-text);
+  border-radius: 12px; font-size: 14px; font-weight: 700; text-decoration: none;
+  transition: transform 0.15s;
 }
-.state {
-  text-align: center;
-  padding: 60px 20px;
-}
+.add-btn:active { transform: scale(0.95); }
+.state { text-align: center; padding: 80px 20px; }
 .state h2 { font-size: 18px; margin: 12px 0 6px; }
-.state p { font-size: 14px; color: var(--color-text-muted); max-width: 280px; margin: 0 auto 20px; }
-.empty-icon { font-size: 48px; margin-bottom: 8px; }
-.spinner {
-  width: 32px; height: 32px;
-  border: 3px solid var(--color-border);
-  border-top-color: var(--color-primary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 12px;
-}
+.state p { font-size: 14px; color: var(--text-muted); max-width: 280px; margin: 0 auto 20px; }
+.empty-icon { font-size: 56px; margin-bottom: 8px; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.cta-btn {
-  display: inline-block;
-  padding: 12px 28px;
-  background: var(--color-primary);
-  color: white;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  text-decoration: none;
-}
-.card-anim {
-  animation: fadeUp 0.4s ease both;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.load-more {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  color: var(--color-primary);
-  font-weight: 600;
-  font-size: 14px;
-  margin-top: 8px;
-}
+.cta-btn { display: inline-block; padding: 14px 32px; background: var(--primary); color: var(--primary-text); border-radius: 14px; font-weight: 700; font-size: 15px; text-decoration: none; }
+.load-more { display: block; width: 100%; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; color: var(--primary); font-weight: 600; font-size: 14px; margin-top: 8px; }
 </style>

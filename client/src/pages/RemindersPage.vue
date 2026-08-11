@@ -63,8 +63,9 @@ async function handleDelete(id: string) {
 
 <style scoped>
 .add-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.input { padding: 10px 14px; border: 2px solid var(--color-border); border-radius: 8px; outline: none; font-size: 15px; }
-.input:focus { border-color: var(--color-primary); }
-.btn-primary { padding: 12px; background: var(--color-primary); color: white; border-radius: 8px; font-weight: 600; }
-.center { text-align: center; padding: 32px 0; color: var(--color-text-muted); }
+.input { padding: 10px 14px; border: 2px solid var(--border); border-radius: 12px; outline: none; font-size: 15px; background: var(--surface); color: var(--text); }
+.input:focus { border-color: var(--primary); }
+.btn-primary { padding: 14px; background: var(--primary); color: var(--primary-text); border-radius: 12px; font-weight: 700; font-size: 15px; }
+.btn-primary:disabled { opacity: 0.5; }
+.center { text-align: center; padding: 32px 0; color: var(--text-muted); }
 </style>

@@ -1,55 +1,53 @@
 <template>
-  <AppLayout :title="$t('settings.title')">
-    <section class="section">
-      <h3>{{ $t('settings.language') }}</h3>
-      <LanguageSwitcher />
-    </section>
+  <AppLayout>
+    <h1 class="page-title">Settings</h1>
 
-    <section class="section">
-      <h3>{{ $t('settings.notificationSettings') }}</h3>
-      <p class="note">{{ $t('settings.notificationsNote') }}</p>
+    <!-- Appearance -->
+    <div class="card">
+      <h3 class="section-title">Appearance</h3>
+      <div class="setting-row">
+        <div><strong>Dark Mode</strong><p class="sub">Easier on the eyes at night</p></div>
+        <label class="toggle">
+          <input type="checkbox" :checked="theme.isDark.value" @change="theme.toggle()" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div><strong>Language</strong></div>
+        <select :value="locale" @change="switchLang(($event.target as HTMLSelectElement).value)" class="lang-select">
+          <option v-for="l in availableLocales" :key="l.code" :value="l.code">{{ l.nativeName }}</option>
+        </select>
+      </div>
+    </div>
 
-      <div class="toggle-row">
-        <span>{{ $t('reminder.medicine') }}</span>
+    <!-- Notifications -->
+    <div class="card">
+      <h3 class="section-title">Notifications</h3>
+      <p class="sub">Choose which types send you notifications</p>
+      <div class="setting-row" v-for="t in notifTypes" :key="t.key">
+        <span>{{ t.label }}</span>
         <label class="toggle">
-          <input type="checkbox" v-model="notifSettings.medicine" />
+          <input type="checkbox" v-model="notifSettings[t.key]" />
           <span class="slider"></span>
         </label>
       </div>
-      <div class="toggle-row">
-        <span>{{ $t('reminder.appointment') }}</span>
-        <label class="toggle">
-          <input type="checkbox" v-model="notifSettings.appointment" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="toggle-row">
-        <span>{{ $t('reminder.revisit') }}</span>
-        <label class="toggle">
-          <input type="checkbox" v-model="notifSettings.revisit" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="toggle-row">
-        <span>{{ $t('reminder.report') }}</span>
-        <label class="toggle">
-          <input type="checkbox" v-model="notifSettings.report" />
-          <span class="slider"></span>
-        </label>
-      </div>
-    </section>
+    </div>
 
-    <section class="section about">
-      <h3>{{ $t('settings.about') }}</h3>
-      <p>{{ $t('settings.version') }}</p>
-    </section>
+    <p class="version">MedPrescription v2.0</p>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
 import AppLayout from '../components/AppLayout.vue';
-import LanguageSwitcher from '../components/LanguageSwitcher.vue';
+import { useTheme } from '../composables/useTheme';
+import { availableLocales } from '../locales';
+
+const { locale } = useI18n();
+const theme = useTheme();
+
+function switchLang(code: string) { locale.value = code; localStorage.setItem('language', code); }
 
 const notifSettings = reactive({
   medicine: JSON.parse(localStorage.getItem('notif_medicine') || 'true'),
@@ -58,23 +56,30 @@ const notifSettings = reactive({
   report: JSON.parse(localStorage.getItem('notif_report') || 'true'),
 });
 
-// Watch and persist
 import { watch } from 'vue';
-watch(notifSettings, (val) => {
-  Object.entries(val).forEach(([k, v]) => localStorage.setItem(`notif_${k}`, JSON.stringify(v)));
-}, { deep: true });
+watch(notifSettings, (val) => { Object.entries(val).forEach(([k, v]) => localStorage.setItem(`notif_${k}`, JSON.stringify(v))); }, { deep: true });
+
+const notifTypes = [
+  { key: 'medicine', label: 'Medicine' },
+  { key: 'appointment', label: 'Appointment' },
+  { key: 'revisit', label: 'Revisit' },
+  { key: 'report', label: 'Report' },
+];
 </script>
 
 <style scoped>
-.section { margin-bottom: 28px; }
-.section h3 { margin-bottom: 12px; font-size: 16px; }
-.note { color: var(--color-text-muted); font-size: 13px; margin-bottom: 14px; }
-.toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--color-border); }
-.toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+.page-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.section-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.setting-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-light); }
+.setting-row:last-child { border-bottom: none; }
+.sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.toggle { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
 .toggle input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
-.toggle input:checked + .slider { background: var(--color-primary); }
-.slider::before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
-.toggle input:checked + .slider::before { transform: translateX(20px); }
-.about p { color: var(--color-text-muted); font-size: 14px; }
+.slider { position: absolute; inset: 0; background: var(--border); border-radius: 26px; transition: 0.3s; }
+.toggle input:checked + .slider { background: var(--primary); }
+.slider::before { content: ''; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+.toggle input:checked + .slider::before { transform: translateX(22px); }
+.lang-select { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; width: auto; }
+.version { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 8px; }
 </style>

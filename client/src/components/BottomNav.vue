@@ -46,21 +46,23 @@ const items = computed(() => {
 <style scoped>
 .nav-container {
   position: fixed;
-  bottom: 16px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
   padding: 0 16px;
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
 }
 .pill-nav {
   display: flex;
-  background: var(--color-surface);
+  background: var(--surface);
   border-radius: 20px;
-  padding: 6px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
-  border: 1px solid var(--color-border);
+  padding: 4px;
+  box-shadow: var(--nav-shadow);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 .nav-item {
   flex: 1;
@@ -70,14 +72,14 @@ const items = computed(() => {
   gap: 2px;
   padding: 8px 4px;
   border-radius: 16px;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
   text-decoration: none;
   transition: all 0.2s;
   position: relative;
 }
 .nav-item.active {
-  color: var(--color-primary);
-  background: var(--color-primary-bg);
+  color: var(--primary);
+  background: var(--primary-bg);
 }
 .nav-icon { font-size: 20px; line-height: 1; }
 .nav-label { font-size: 10px; font-weight: 600; }
