@@ -3,7 +3,11 @@
 
 -- Add role to users
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'patient';
-ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('patient', 'doctor', 'pharmacy'));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'users_role_check') THEN
+    ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('patient', 'doctor', 'pharmacy'));
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 -- Add doctor_id to prescriptions (for doctor-issued prescriptions)

@@ -43,8 +43,8 @@ const items = computed(() => {
   return [
     { to: '/home', icon: '🏠', label: 'Home' },
     { to: '/doctors', icon: '👨‍⚕️', label: 'Doctors' },
+    { to: '/shop', icon: '🛒', label: 'Shop' },
     { to: '/appointments', icon: '📅', label: 'Appts' },
-    { to: '/upload', icon: '➕', label: 'Upload' },
     { to: '/profile', icon: '👤', label: 'Profile' },
   ];
 });
