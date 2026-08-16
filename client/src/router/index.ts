@@ -19,6 +19,7 @@ const router = createRouter({
     { path: '/doctors', name: 'doctors', component: () => import('../pages/DoctorListPage.vue'), meta: { auth: true, role: 'patient' } },
     { path: '/doctors/:id', name: 'doctor-profile', component: () => import('../pages/DoctorProfilePage.vue'), meta: { auth: true, role: 'patient' } },
     { path: '/shop', name: 'shop', component: () => import('../pages/ShopPage.vue'), meta: { auth: true } },
+    { path: '/plans', name: 'plans', component: () => import('../pages/TreatmentPlansPage.vue'), meta: { auth: true, role: 'patient' } },
 
     // Doctor routes
     { path: '/dashboard', name: 'dashboard', component: () => import('../pages/DoctorDashboard.vue'), meta: { auth: true, role: 'doctor' } },

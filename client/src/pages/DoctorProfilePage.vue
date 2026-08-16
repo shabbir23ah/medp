@@ -14,6 +14,12 @@
         <span class="badge-spec">{{ doctor.specialization }}</span>
         <span class="verified-badge" v-if="doctor.license_number">✓ Verified · Lic. {{ doctor.license_number }}</span>
 
+        <div class="rating-display" v-if="rating.count > 0">
+          <span class="big-stars">★★★★★</span>
+          <span class="big-rating">{{ rating.avg.toFixed(1) }}</span>
+          <span class="rating-count">· {{ rating.count }} review{{ rating.count > 1 ? 's' : '' }}</span>
+        </div>
+
         <div class="stats-row">
           <div class="stat-item">
             <span class="stat-num">12+</span>
@@ -46,6 +52,33 @@
             <span class="day">{{ day }}</span>
             <span class="time">{{ time }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="section-card">
+        <h3>⭐ Patient Reviews ({{ rating.count }})</h3>
+        <div v-if="reviews.length === 0" class="no-reviews">No reviews yet. Be the first to review this doctor.</div>
+        <div v-for="r in reviews" :key="r.id" class="review-item">
+          <div class="review-head">
+            <strong>{{ r.patient_name || 'Patient' }}</strong>
+            <span class="review-stars">{{ '★'.repeat(r.rating) }}{{ '☆'.repeat(5 - r.rating) }}</span>
+          </div>
+          <p v-if="r.comment" class="review-comment">{{ r.comment }}</p>
+          <span class="review-date">{{ fmtDate(r.created_at) }}</span>
+        </div>
+
+        <!-- Write review (patient only) -->
+        <div class="write-review" v-if="!auth.isDoctor">
+          <h4>Rate this doctor</h4>
+          <div class="star-picker">
+            <button v-for="n in 5" :key="n" @click="myRating = n" class="star-btn" :class="{ on: n <= myRating }">★</button>
+          </div>
+          <textarea v-model="myComment" placeholder="Share your experience (optional)" rows="2"></textarea>
+          <button @click="submitReview" :disabled="submitting || myRating === 0" class="btn-submit-review">
+            {{ submitting ? 'Submitting...' : 'Submit Review' }}
+          </button>
+          <p v-if="reviewDone" class="success">✓ Review submitted!</p>
         </div>
       </div>
 
@@ -83,10 +116,12 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
+import { useAuthStore } from '../stores/auth';
 
 const route = useRoute();
 const router = useRouter();
 const api = useApi();
+const auth = useAuthStore();
 const doctor = ref<any>(null);
 const loading = ref(true);
 const booking = ref(false);
@@ -95,6 +130,12 @@ const bookError = ref('');
 const scheduledDate = ref('');
 const scheduledTime = ref('');
 const notes = ref('');
+const reviews = ref<any[]>([]);
+const rating = ref({ avg: 0, count: 0 });
+const myRating = ref(0);
+const myComment = ref('');
+const submitting = ref(false);
+const reviewDone = ref(false);
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -110,8 +151,30 @@ onMounted(async () => {
   try {
     const { data } = await api.get(`/doctors/${route.params.id}`);
     if (data.ok) doctor.value = data.data;
+    const r = await api.get(`/enhancements/doctors/${route.params.id}/reviews`);
+    if (r.data.ok) {
+      reviews.value = r.data.data.reviews;
+      rating.value = r.data.data.rating;
+    }
   } finally { loading.value = false; }
 });
+
+async function submitReview() {
+  if (myRating.value === 0) return;
+  submitting.value = true;
+  try {
+    await api.post(`/enhancements/doctors/${route.params.id}/reviews`, {
+      rating: myRating.value,
+      comment: myComment.value || undefined,
+    });
+    reviewDone.value = true;
+    const r = await api.get(`/enhancements/doctors/${route.params.id}/reviews`);
+    if (r.data.ok) {
+      reviews.value = r.data.data.reviews;
+      rating.value = r.data.data.rating;
+    }
+  } finally { submitting.value = false; }
+}
 
 async function bookAppointment() {
   if (!scheduledDate.value || !scheduledTime.value) return;
@@ -178,7 +241,33 @@ async function bookAppointment() {
   font-weight: 700;
   margin-bottom: 8px;
 }
-.verified-badge { display: block; font-size: 12px; color: var(--success); font-weight: 600; margin-bottom: 20px; }
+.verified-badge { display: block; font-size: 12px; color: var(--success); font-weight: 600; margin-bottom: 12px; }
+.rating-display { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 16px; }
+.big-stars { color: var(--warning); font-size: 18px; letter-spacing: 2px; }
+.big-rating { font-size: 16px; font-weight: 800; }
+.rating-count { font-size: 12px; color: var(--text-muted); }
+.review-item { padding: 12px 0; border-bottom: 1px solid var(--border-light); }
+.review-head { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.review-stars { color: var(--warning); font-size: 13px; }
+.review-comment { font-size: 13px; color: var(--text-secondary); }
+.review-date { font-size: 11px; color: var(--text-muted); }
+.no-reviews { font-size: 13px; color: var(--text-muted); padding: 12px 0; }
+.write-review { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.write-review h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.star-picker { display: flex; gap: 4px; margin-bottom: 10px; }
+.star-btn { font-size: 24px; color: var(--border); transition: color 0.15s; }
+.star-btn.on { color: var(--warning); }
+.write-review textarea {
+  width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 13px; background: var(--bg); color: var(--text); resize: vertical; font-family: inherit;
+}
+.write-review textarea:focus { border-color: var(--primary); outline: none; }
+.btn-submit-review {
+  margin-top: 8px; width: 100%; padding: 10px;
+  background: var(--primary); color: var(--primary-text); border-radius: 10px; font-weight: 700; font-size: 13px;
+}
+.btn-submit-review:disabled { opacity: 0.5; }
+.success { color: var(--success); font-size: 13px; font-weight: 600; margin-top: 8px; text-align: center; }
 .stats-row { display: flex; align-items: center; justify-content: center; gap: 0; padding-top: 20px; border-top: 1px solid var(--border); }
 .stat-item { flex: 1; text-align: center; }
 .stat-num { display: block; font-size: 15px; font-weight: 700; color: var(--text); }

@@ -49,6 +49,11 @@
             <span class="verified" v-if="d.license_number">✓ Verified</span>
           </div>
           <span class="doc-spec">{{ d.specialization || 'General Practitioner' }}</span>
+          <div class="doc-rating" v-if="d.rating && d.rating.count > 0">
+            <span class="stars">★</span>
+            <span class="rating-num">{{ d.rating.avg.toFixed(1) }}</span>
+            <span class="rating-count">({{ d.rating.count }})</span>
+          </div>
           <div class="doc-meta">
             <span class="meta-chip">📅 Available Today</span>
             <span class="meta-chip fee">৳{{ d.consultation_fee || 0 }}</span>
@@ -77,7 +82,16 @@ async function fetchDoctors() {
     const params: any = {};
     if (specialization.value) params.specialization = specialization.value;
     const { data } = await api.get('/doctors', { params });
-    if (data.ok) doctors.value = data.data;
+    if (data.ok) {
+      doctors.value = data.data;
+      // Fetch ratings for each doctor
+      for (const d of doctors.value) {
+        try {
+          const r = await api.get(`/enhancements/doctors/${d.id}/reviews`);
+          if (r.data.ok) d.rating = r.data.data.rating;
+        } catch {}
+      }
+    }
   } finally {
     loading.value = false;
   }
@@ -180,6 +194,10 @@ onMounted(fetchDoctors);
 .doc-name-row strong { font-size: 16px; }
 .verified { font-size: 11px; color: var(--success); font-weight: 600; background: var(--success-bg); padding: 2px 8px; border-radius: 6px; }
 .doc-spec { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.doc-rating { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+.stars { color: var(--warning); font-size: 14px; }
+.rating-num { font-size: 13px; font-weight: 700; }
+.rating-count { font-size: 12px; color: var(--text-muted); }
 .doc-meta { display: flex; gap: 8px; }
 .meta-chip {
   font-size: 12px;

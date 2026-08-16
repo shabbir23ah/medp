@@ -44,7 +44,7 @@ const items = computed(() => {
     { to: '/home', icon: '🏠', label: 'Home' },
     { to: '/doctors', icon: '👨‍⚕️', label: 'Doctors' },
     { to: '/shop', icon: '🛒', label: 'Shop' },
-    { to: '/appointments', icon: '📅', label: 'Appts' },
+    { to: '/plans', icon: '📋', label: 'Plans' },
     { to: '/profile', icon: '👤', label: 'Profile' },
   ];
 });

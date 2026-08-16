@@ -93,6 +93,7 @@ const navItems = computed(() => {
     { to: '/home', icon: '🏠', label: 'Home' },
     { to: '/doctors', icon: '👨‍⚕️', label: 'Find Doctor' },
     { to: '/shop', icon: '🛒', label: 'Shop' },
+    { to: '/plans', icon: '📋', label: 'Treatment Plans' },
     { to: '/appointments', icon: '📅', label: 'Appointments' },
     { to: '/upload', icon: '➕', label: 'Upload' },
   ];

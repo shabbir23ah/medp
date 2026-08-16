@@ -20,6 +20,35 @@
       </div>
     </div>
 
+    <!-- Quick Rx Builder -->
+    <div class="section-card">
+      <div class="section-head">
+        <h3>💊 Quick Prescription Builder</h3>
+      </div>
+      <div class="rx-builder">
+        <div class="rx-meds-input">
+          <input v-model="rxDrug" placeholder="Add medicine name (e.g. Warfarin)" @keyup.enter="addDrug" />
+          <button @click="addDrug" class="btn-add-drug">+</button>
+        </div>
+        <div class="rx-chips" v-if="rxDrugs.length > 0">
+          <span v-for="(d, i) in rxDrugs" :key="i" class="rx-chip">
+            {{ d }} <button @click="rxDrugs.splice(i, 1)" class="chip-x">✕</button>
+          </span>
+        </div>
+        <button v-if="rxDrugs.length >= 2" @click="checkDrugs" :disabled="checking" class="btn-check">
+          {{ checking ? 'Checking...' : '🔍 Check Interactions' }}
+        </button>
+        <div v-if="interactions.length > 0" class="interaction-results">
+          <div v-for="(ix, i) in interactions" :key="i" class="interaction-item" :class="ix.severity">
+            <span class="ix-sev">{{ ix.severity.toUpperCase() }}</span>
+            <strong>{{ ix.drug_a }} + {{ ix.drug_b }}</strong>
+            <p>{{ ix.description }}</p>
+          </div>
+        </div>
+        <p v-if="checked && interactions.length === 0" class="safe-msg">✓ No known interactions found</p>
+      </div>
+    </div>
+
     <div class="section-card">
       <div class="section-head">
         <h3>📅 Today's Schedule</h3>
@@ -76,6 +105,33 @@ const api = useApi();
 
 const allAppts = ref<any[]>([]);
 const stats = ref({ today: 0, pending: 0, total: 0 });
+const rxDrug = ref('');
+const rxDrugs = ref<string[]>([]);
+const interactions = ref<any[]>([]);
+const checking = ref(false);
+const checked = ref(false);
+
+function addDrug() {
+  if (rxDrug.value.trim() && rxDrugs.value.length < 10) {
+    rxDrugs.value.push(rxDrug.value.trim());
+    rxDrug.value = '';
+    interactions.value = [];
+    checked.value = false;
+  }
+}
+
+async function checkDrugs() {
+  if (rxDrugs.value.length < 2) return;
+  checking.value = true;
+  checked.value = false;
+  try {
+    const { data } = await api.post('/enhancements/drug-check', { drugs: rxDrugs.value });
+    if (data.ok) {
+      interactions.value = data.data;
+      checked.value = true;
+    }
+  } finally { checking.value = false; }
+}
 
 const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
 const todayStr = new Date().toISOString().slice(0, 10);
@@ -166,4 +222,31 @@ function fmtShort(d: string) {
   border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none;
 }
 .empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
+.rx-builder { display: flex; flex-direction: column; gap: 10px; }
+.rx-meds-input { display: flex; gap: 8px; }
+.rx-meds-input input {
+  flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 14px; background: var(--bg); color: var(--text);
+}
+.rx-meds-input input:focus { border-color: var(--primary); outline: none; }
+.btn-add-drug { padding: 10px 16px; background: var(--primary); color: var(--primary-text); border-radius: 10px; font-weight: 700; }
+.rx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rx-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; background: var(--primary-bg); color: var(--primary);
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+}
+.chip-x { color: var(--danger); font-weight: 700; font-size: 12px; }
+.btn-check { padding: 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; font-weight: 700; font-size: 13px; }
+.btn-check:disabled { opacity: 0.5; }
+.interaction-results { display: flex; flex-direction: column; gap: 8px; }
+.interaction-item { padding: 12px; border-radius: 10px; border-left: 4px solid; }
+.interaction-item.severe { background: var(--danger-bg); border-color: var(--danger); }
+.interaction-item.moderate { background: var(--warning-bg); border-color: var(--warning); }
+.interaction-item.mild { background: var(--bg-secondary); border-color: var(--text-muted); }
+.ix-sev { font-size: 10px; font-weight: 800; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+.interaction-item.severe .ix-sev { color: var(--danger); }
+.interaction-item.moderate .ix-sev { color: var(--warning); }
+.interaction-item p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.safe-msg { color: var(--success); font-size: 13px; font-weight: 600; text-align: center; padding: 8px; }
 </style>
