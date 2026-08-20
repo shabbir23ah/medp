@@ -140,11 +140,7 @@ const items = computed(() => {
     linear-gradient(180deg, var(--dock-highlight) 0%, transparent 45%),
     var(--dock-bg);
   border: 1px solid var(--dock-border);
-  box-shadow:
-    inset 0 1px 0 var(--dock-inset),
-    inset 0 0 0 0.5px rgba(255,255,255,0.04),
-    0 12px 32px rgba(0,0,0,0.16),
-    0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: var(--dock-shadow);
   /* Frosted blur — blurs what's behind the bar */
   backdrop-filter: blur(28px) saturate(1.8);
   -webkit-backdrop-filter: blur(28px) saturate(1.8);
