@@ -6,7 +6,7 @@
     </div>
 
     <div class="stats-row">
-      <div class="stat-card accent">
+      <div class="stat-card">
         <span class="stat-num">{{ stats.today }}</span>
         <span class="stat-label">Today's Appointments</span>
       </div>
@@ -174,9 +174,7 @@ function fmtShort(d: string) {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 16px; padding: 16px; text-align: center;
 }
-.stat-card.accent { background: var(--primary-bg); border-color: transparent; }
 .stat-num { font-size: 24px; font-weight: 800; display: block; }
-.stat-card.accent .stat-num { color: var(--primary); }
 .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
 
 .section-card {

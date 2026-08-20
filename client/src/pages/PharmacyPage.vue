@@ -6,7 +6,7 @@
     </div>
 
     <div class="stats-row">
-      <div class="stat-card accent">
+      <div class="stat-card">
         <span class="stat-num">{{ medicines.length }}</span>
         <span class="stat-label">Products</span>
       </div>
@@ -135,9 +135,7 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString(); }
 .page-hero p { font-size: 13px; color: var(--text-muted); }
 .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; }
-.stat-card.accent { background: var(--primary-bg); border-color: transparent; }
 .stat-num { font-size: 24px; font-weight: 800; display: block; }
-.stat-card.accent .stat-num { color: var(--primary); }
 .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
 .section-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin-bottom: 14px; }
 .section-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }

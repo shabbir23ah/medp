@@ -7,7 +7,7 @@
 
     <!-- Quick Stats -->
     <div class="stats-row">
-      <div class="stat-card accent" @click="$router.push('/timeline')">
+      <div class="stat-card" @click="$router.push('/timeline')">
         <ClipboardList class="stat-icon" :size="22" :stroke-width="2" />
         <span class="stat-num">{{ stats.prescriptions }}</span>
         <span class="stat-label">Prescriptions</span>
@@ -127,10 +127,8 @@ function fmtDate(d: string) {
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.stat-card.accent { background: var(--primary-bg); border-color: transparent; }
 .stat-icon { font-size: 22px; display: block; margin-bottom: 6px; }
 .stat-num { font-size: 24px; font-weight: 800; display: block; }
-.stat-card.accent .stat-num { color: var(--primary); }
 .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
 
 .actions-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
