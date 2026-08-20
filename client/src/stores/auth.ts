@@ -40,8 +40,11 @@ export const useAuthStore = defineStore('auth', () => {
     const api = useApi();
     const { data } = await api.post('/auth/verify-otp', { phone, code });
     if (data.ok) {
-      // If logging in and user is new, redirect to register
+      // If logging in and user is new, redirect to register to pick a role
       if (data.data.isNew && mode === 'login') {
+        // Save token so register can use it without re-consuming OTP
+        token.value = data.data.token;
+        persist();
         router.push({ name: 'register', query: { phone } });
         return data;
       }
@@ -54,6 +57,8 @@ export const useAuthStore = defineStore('auth', () => {
         router.push('/profile');
       } else if (data.data.isNew && user.value?.role === 'doctor') {
         router.push('/dashboard');
+      } else if (data.data.isNew && user.value?.role === 'pharmacy') {
+        router.push('/pharmacy');
       } else {
         router.push('/timeline');
       }

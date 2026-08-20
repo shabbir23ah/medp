@@ -69,7 +69,7 @@ router.post('/verify-otp', async (req, res) => {
 // POST /api/auth/register — set role and optional doctor profile
 const registerSchema = z.object({
   phone: z.string().min(6).max(20).regex(/^\+?[0-9]+$/),
-  code: z.string().length(6),
+  code: z.string().length(6).optional(),
   role: z.enum(['patient', 'doctor', 'pharmacy']),
   name: z.string().min(1).max(100).optional(),
   specialization: z.string().max(200).optional(),
@@ -85,13 +85,36 @@ router.post('/register', async (req, res) => {
     return;
   }
 
-  const valid = await checkOtp(parsed.data.phone, parsed.data.code);
-  if (!valid) {
-    res.status(401).json({ ok: false, error: 'Invalid or expired OTP' });
-    return;
+  // If a bearer token is provided (user already verified via verify-otp), trust it
+  let verifiedUserId: string | null = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const payload = jwt.verify(authHeader.slice(7), config.JWT_SECRET) as { userId: string };
+      verifiedUserId = payload.userId;
+    } catch { /* fall through to OTP check */ }
+  }
+
+  if (!verifiedUserId) {
+    // No token: require a valid OTP
+    if (!parsed.data.code) {
+      res.status(400).json({ ok: false, error: 'OTP code is required' });
+      return;
+    }
+    const valid = await checkOtp(parsed.data.phone, parsed.data.code);
+    if (!valid) {
+      res.status(401).json({ ok: false, error: 'Invalid or expired OTP' });
+      return;
+    }
   }
 
   const { user } = await getOrCreateUser(parsed.data.phone);
+
+  // If a verified token user exists, make sure it matches the phone's user
+  if (verifiedUserId && verifiedUserId !== user.id) {
+    res.status(401).json({ ok: false, error: 'Phone number does not match verified session' });
+    return;
+  }
 
   // Update role and name
   await pool.query(

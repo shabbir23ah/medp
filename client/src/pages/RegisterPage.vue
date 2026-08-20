@@ -89,10 +89,14 @@ const sending = ref(false);
 const verifying = ref(false);
 const registering = ref(false);
 const error = ref('');
+const verifiedToken = ref('');
 
-// If phone is in query (redirected from login), start at step 3
+// If phone is in query (redirected from login), start at step 3 and reuse verified token
 onMounted(() => {
-  if (phone.value) step.value = 3;
+  if (phone.value) {
+    step.value = 3;
+    if (auth.token) verifiedToken.value = auth.token;
+  }
 });
 
 const roles = [
@@ -118,8 +122,12 @@ async function verifyOtp() {
   error.value = '';
   verifying.value = true;
   try {
-    await api.post('/auth/verify-otp', { phone: phone.value, code: code.value });
-    step.value = 3;
+    const { data } = await api.post('/auth/verify-otp', { phone: phone.value, code: code.value });
+    if (data.ok) {
+      // Save the session token — register will use it instead of re-consuming the OTP
+      verifiedToken.value = data.data.token;
+      step.value = 3;
+    }
   } catch (e: any) {
     error.value = e.response?.data?.error || 'Invalid code';
   } finally {
@@ -133,19 +141,23 @@ async function register() {
   try {
     const payload: any = {
       phone: phone.value,
-      code: code.value || '123456', // Use mock code if coming from login redirect
       role: selectedRole.value,
       name: name.value || undefined,
     };
+    // Only send code if we don't have a verified token (login-redirect flow)
+    if (!verifiedToken.value && code.value) {
+      payload.code = code.value;
+    }
     if (selectedRole.value === 'doctor') {
       payload.specialization = specialization.value || undefined;
     }
 
-    const { data } = await api.post('/auth/register', payload);
+    const headers = verifiedToken.value ? { Authorization: `Bearer ${verifiedToken.value}` } : {};
+    const { data } = await api.post('/auth/register', payload, { headers });
     if (data.ok) {
       auth.token = data.data.token;
       auth.user = data.data.user;
-      const dest = selectedRole.value === 'doctor' ? '/dashboard' : '/timeline';
+      const dest = selectedRole.value === 'doctor' ? '/dashboard' : selectedRole.value === 'pharmacy' ? '/pharmacy' : '/timeline';
       router.push(dest);
     }
   } catch (e: any) {
