@@ -9,7 +9,7 @@
         active-class="active"
         exact
       >
-        <component :is="item.icon" class="nav-icon" :size="20" :stroke-width="2.2" />
+        <component :is="item.icon" class="nav-icon" :size="isCompact ? 17 : 20" :stroke-width="2.2" />
         <span class="nav-label">{{ item.label }}</span>
       </router-link>
     </nav>
@@ -29,6 +29,8 @@ const isHidden = ref(false);
 const isCompact = ref(false);
 let lastScrollY = window.scrollY;
 let ticking = false;
+let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+let showTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function onScroll() {
   if (ticking) return;
@@ -37,14 +39,20 @@ function onScroll() {
     const y = window.scrollY;
     const delta = y - lastScrollY;
 
-    // Compact (smaller) after scrolling a bit
+    // Compact (smaller) after scrolling a bit — smooth via CSS transition
     isCompact.value = y > 60;
 
-    // Hide when scrolling down fast, show when scrolling up or near top
-    if (delta > 8 && y > 120) {
-      isHidden.value = true;
-    } else if (delta < -8 || y < 80) {
-      isHidden.value = false;
+    // iOS-like: only hide after sustained scroll down, restore instantly on scroll up
+    if (delta > 5 && y > 140) {
+      if (!isHidden.value) {
+        // Small delay so micro-scrolls don't hide the bar
+        hideTimeout = setTimeout(() => { isHidden.value = true; }, 60);
+      }
+    } else if (delta < -3 || y < 100) {
+      if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null; }
+      if (isHidden.value) {
+        showTimeout = setTimeout(() => { isHidden.value = false; }, 0);
+      }
     }
 
     lastScrollY = y;
@@ -56,7 +64,11 @@ onMounted(() => {
   lastScrollY = window.scrollY;
   window.addEventListener('scroll', onScroll, { passive: true });
 });
-onUnmounted(() => window.removeEventListener('scroll', onScroll));
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll);
+  if (hideTimeout) clearTimeout(hideTimeout);
+  if (showTimeout) clearTimeout(showTimeout);
+});
 
 const items = computed(() => {
   if (auth.isDoctor) {
@@ -90,12 +102,16 @@ const items = computed(() => {
   position: fixed;
   bottom: 12px;
   left: 50%;
-  transform: translateX(-50%);
   z-index: 100;
   padding: 0 16px;
   width: 100%;
   max-width: 440px;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+  /* iOS-style spring curve: smooth ease-out with slight overshoot feel */
+  transition:
+    transform 0.5s cubic-bezier(0.32, 0.72, 0.34, 1),
+    opacity 0.45s cubic-bezier(0.32, 0.72, 0.34, 1);
+  will-change: transform, opacity;
+  transform: translateX(-50%);
 }
 .pill-nav {
   display: flex;
@@ -106,7 +122,11 @@ const items = computed(() => {
   border: 1px solid var(--border);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  transition: padding 0.3s, border-radius 0.3s;
+  /* Smooth size changes */
+  transition:
+    padding 0.4s cubic-bezier(0.32, 0.72, 0.34, 1),
+    border-radius 0.4s cubic-bezier(0.32, 0.72, 0.34, 1),
+    box-shadow 0.4s ease;
 }
 .nav-item {
   flex: 1;
@@ -118,24 +138,24 @@ const items = computed(() => {
   border-radius: 16px;
   color: var(--text-muted);
   text-decoration: none;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.32, 0.72, 0.34, 1);
 }
 .nav-item.active {
   color: var(--primary);
   background: var(--primary-bg);
 }
-.nav-icon { line-height: 1; transition: all 0.3s; }
-.nav-label { font-size: 10px; font-weight: 600; transition: all 0.3s; }
+.nav-icon { line-height: 1; transition: all 0.4s cubic-bezier(0.32, 0.72, 0.34, 1); }
+.nav-label { font-size: 10px; font-weight: 600; transition: all 0.4s cubic-bezier(0.32, 0.72, 0.34, 1); }
 
-/* Compact: smaller bar while scrolling */
+/* Compact: gracefully shrinks while scrolling */
 .mobile-nav.compact .pill-nav { padding: 2px; border-radius: 16px; }
 .mobile-nav.compact .nav-item { padding: 5px 4px; }
 .mobile-nav.compact .nav-icon { font-size: 17px; }
-.mobile-nav.compact .nav-label { font-size: 9px; }
+.mobile-nav.compact .nav-label { font-size: 9px; opacity: 0.9; }
 
-/* Hidden: slides down out of view */
+/* Hidden: glides down out of view, iOS-like */
 .mobile-nav.hidden {
-  transform: translateX(-50%) translateY(90px);
+  transform: translateX(-50%) translateY(140%);
   opacity: 0;
   pointer-events: none;
 }
