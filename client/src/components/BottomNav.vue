@@ -130,21 +130,44 @@ const items = computed(() => {
   transform: translateX(-50%);
 }
 .pill-nav {
+  position: relative;
   display: flex;
-  background: var(--surface);
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 4px;
-  box-shadow: var(--nav-shadow);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  /* iOS frosted glass — layered translucent tint */
+  background:
+    linear-gradient(180deg, var(--dock-highlight) 0%, transparent 45%),
+    var(--dock-bg);
+  border: 1px solid var(--dock-border);
+  box-shadow:
+    inset 0 1px 0 var(--dock-inset),
+    inset 0 0 0 0.5px rgba(255,255,255,0.04),
+    0 12px 32px rgba(0,0,0,0.16),
+    0 2px 8px rgba(0,0,0,0.08);
+  /* Frosted blur — blurs what's behind the bar */
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
   /* Smooth size changes */
   transition:
     padding 0.4s cubic-bezier(0.32, 0.72, 0.34, 1),
     border-radius 0.4s cubic-bezier(0.32, 0.72, 0.34, 1),
     box-shadow 0.4s ease;
 }
+/* Top sheen — the glossy highlight line like iOS dock */
+.pill-nav::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 50%;
+  border-radius: 22px 22px 40% 40%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.05) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
 .nav-item {
+  position: relative;
+  z-index: 2;
   flex: 1;
   display: flex;
   flex-direction: column;

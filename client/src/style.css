@@ -26,6 +26,11 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
   --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
   --nav-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  /* iOS glossy dock — light */
+  --dock-bg: rgba(255, 255, 255, 0.72);
+  --dock-highlight: rgba(255, 255, 255, 0.55);
+  --dock-border: rgba(255, 255, 255, 0.55);
+  --dock-inset: rgba(255, 255, 255, 0.6);
 }
 
 /* Dark theme */
@@ -55,6 +60,11 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
   --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
   --nav-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  /* iOS glossy dock — dark */
+  --dock-bg: rgba(26, 35, 50, 0.65);
+  --dock-highlight: rgba(255, 255, 255, 0.08);
+  --dock-border: rgba(255, 255, 255, 0.12);
+  --dock-inset: rgba(255, 255, 255, 0.08);
 }
 
 /* Base */
