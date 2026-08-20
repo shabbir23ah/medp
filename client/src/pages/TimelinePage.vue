@@ -13,7 +13,7 @@
 
     <!-- Empty -->
     <div v-else-if="store.prescriptions.length === 0" class="empty-state">
-      <div class="empty-art">📋</div>
+      <div class="empty-art"><ClipboardList :size="14" :stroke-width="2" class="inline-icon" /></div>
       <h2>Your timeline is empty</h2>
       <p>Upload your first prescription and start building your complete health history.</p>
       <router-link to="/upload" class="cta-btn">Upload First Prescription</router-link>
@@ -46,6 +46,7 @@ import AppLayout from '../components/AppLayout.vue';
 import PrescriptionCard from '../components/PrescriptionCard.vue';
 import { usePrescriptionsStore } from '../stores/prescriptions';
 import { subscribeToPush } from '../composables/useNotifications';
+import { ClipboardList } from 'lucide-vue-next';
 
 const store = usePrescriptionsStore();
 onMounted(() => { store.fetchPrescriptions(); subscribeToPush(); });
@@ -147,4 +148,5 @@ function loadMore() { store.fetchPrescriptions(store.page + 1); }
   transition: background 0.15s;
 }
 .load-more:hover { background: var(--bg-secondary); }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

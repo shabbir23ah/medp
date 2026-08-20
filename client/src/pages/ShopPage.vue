@@ -1,10 +1,10 @@
 <template>
   <AppLayout>
     <div class="page-hero">
-      <h1>🛒 Medicine Shop</h1>
+      <h1><ShoppingCart :size="22" :stroke-width="2" class="inline-icon" /> Medicine Shop</h1>
       <p>Order medicines from trusted pharmacies.</p>
       <button v-if="cart.length > 0" @click="showCart = !showCart" class="cart-badge">
-        🛒 {{ cart.length }} item{{ cart.length > 1 ? 's' : '' }} · ৳{{ cartTotal }}
+        <ShoppingCart :size="14" :stroke-width="2" /> {{ cart.length }} item{{ cart.length > 1 ? 's' : '' }} · ৳{{ cartTotal }}
       </button>
     </div>
 
@@ -33,14 +33,14 @@
 
     <!-- Orders Tab -->
     <div class="tabs">
-      <button :class="['tab', { active: tab === 'shop' }]" @click="tab = 'shop'">🛍 Shop</button>
-      <button :class="['tab', { active: tab === 'orders' }]" @click="tab = 'orders'; loadOrders()">📋 My Orders</button>
+      <button :class="['tab', { active: tab === 'shop' }]" @click="tab = 'shop'"><ShoppingCart :size="14" :stroke-width="2" /> Shop</button>
+      <button :class="['tab', { active: tab === 'orders' }]" @click="tab = 'orders'; loadOrders()"><ClipboardList :size="14" :stroke-width="2" /> My Orders</button>
     </div>
 
     <!-- Shop -->
     <div v-if="tab === 'shop'">
       <div class="search-bar">
-        <span>🔍</span>
+        <Search :size="15" :stroke-width="2" class="search-icon" />
         <input v-model="search" placeholder="Search medicines..." class="search-input" />
         <select v-model="category" class="filter-select">
           <option value="">All</option>
@@ -60,7 +60,7 @@
         <div class="med-info">
           <strong>{{ med.name }}</strong>
           <span class="cat">{{ med.category }}</span>
-          <span class="pharmacy">🏪 {{ med.pharmacy_name }}</span>
+          <span class="pharmacy"><Store :size="12" :stroke-width="2" class="inline-icon" /> {{ med.pharmacy_name }}</span>
           <span v-if="med.requires_prescription" class="rx-badge">℞ Prescription Required</span>
         </div>
         <div class="med-price">
@@ -89,6 +89,7 @@
 import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
+import { ShoppingCart, ClipboardList, Search, Store } from 'lucide-vue-next';
 
 const api = useApi();
 const medicines = ref<any[]>([]);
@@ -221,4 +222,5 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString(); }
 .badge.delivered { background: var(--success-bg); color: var(--success); }
 .date { font-size: 12px; color: var(--text-muted); }
 .addr { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

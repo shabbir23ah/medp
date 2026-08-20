@@ -8,7 +8,7 @@
     <form @submit.prevent="handleSubmit" class="form">
       <!-- Image Upload -->
       <div class="section-card">
-        <h3>📸 Prescription Photo</h3>
+        <h3><Camera :size="14" :stroke-width="2" class="inline-icon" /> Prescription Photo</h3>
         <FileUpload v-model="image" label="Tap to upload or drag & drop" />
       </div>
 
@@ -33,7 +33,7 @@
 
       <!-- Diagnosis -->
       <div class="section-card">
-        <h3>🩺 Medical Details</h3>
+        <h3><Stethoscope :size="14" :stroke-width="2" class="inline-icon" /> Medical Details</h3>
         <div class="field">
           <label>Diagnosis</label>
           <textarea v-model="form.diagnosis" placeholder="What was diagnosed?" rows="2"></textarea>
@@ -47,7 +47,7 @@
       <!-- Medicines -->
       <div class="section-card">
         <div class="section-header-row">
-          <h3>💊 Medicines</h3>
+          <h3><Pill :size="14" :stroke-width="2" class="inline-icon" /> Medicines</h3>
           <button type="button" @click="addMedicine" class="add-med-btn">+ Add</button>
         </div>
 
@@ -85,6 +85,7 @@ import { useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import FileUpload from '../components/FileUpload.vue';
 import { usePrescriptionsStore } from '../stores/prescriptions';
+import { Camera, Stethoscope, Pill } from 'lucide-vue-next';
 
 const router = useRouter();
 const store = usePrescriptionsStore();
@@ -234,4 +235,6 @@ async function handleSubmit() {
 .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-submit:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(13,148,136,0.35); }
 .error-msg { text-align: center; color: var(--danger); font-size: 14px; font-weight: 600; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
+h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; margin-bottom: 16px; }
 </style>

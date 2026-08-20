@@ -1,7 +1,7 @@
 <template>
   <AppLayout>
     <div class="page-hero">
-      <h1>🏪 {{ auth.user?.name || 'Pharmacy' }}</h1>
+      <h1><Store :size="22" :stroke-width="2" class="inline-icon" /> {{ auth.user?.name || 'Pharmacy' }}</h1>
       <p>{{ today }}</p>
     </div>
 
@@ -47,13 +47,13 @@
           <strong>{{ m.name }}</strong>
           <span>৳{{ m.price }} · Stock: {{ m.stock }} · {{ m.category }}</span>
         </div>
-        <button @click="deleteMed(m.id)" class="del-btn">🗑</button>
+        <button @click="deleteMed(m.id)" class="del-btn"><Trash2 :size="14" :stroke-width="2" class="inline-icon" /></button>
       </div>
     </div>
 
     <!-- Orders -->
     <div class="section-card">
-      <h3>📋 Orders ({{ orders.length }})</h3>
+      <h3><ClipboardList :size="14" :stroke-width="2" class="inline-icon" /> Orders ({{ orders.length }})</h3>
       <div v-if="orders.length === 0" class="empty">No orders yet</div>
       <div v-for="o in orders" :key="o.id" class="order-row">
         <div>
@@ -78,6 +78,7 @@ import { ref, computed, onMounted, reactive } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useAuthStore } from '../stores/auth';
 import { useApi } from '../composables/useApi';
+import { Trash2, ClipboardList, Store } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const api = useApi();
@@ -160,4 +161,5 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString(); }
 .badge.shipped { background: var(--primary-bg); color: var(--primary); }
 .status-select { margin-top: 4px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; background: var(--bg); color: var(--text); }
 .empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

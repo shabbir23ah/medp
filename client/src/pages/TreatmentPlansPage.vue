@@ -1,14 +1,14 @@
 <template>
   <AppLayout>
     <div class="page-hero">
-      <h1>📋 Treatment Plans</h1>
+      <h1><ClipboardList :size="14" :stroke-width="2" class="inline-icon" /> Treatment Plans</h1>
       <p>Your care journey — milestones set by your doctors.</p>
     </div>
 
     <div v-if="loading" class="state"><div class="spinner"></div></div>
 
     <div v-else-if="plans.length === 0" class="empty-state">
-      <span class="empty-icon">🩺</span>
+      <span class="empty-icon"><Stethoscope :size="14" :stroke-width="2" class="inline-icon" /></span>
       <h2>No treatment plans yet</h2>
       <p>When your doctor creates a treatment plan for you, it will appear here with milestones you can track.</p>
     </div>
@@ -40,7 +40,7 @@
           </button>
           <div class="milestone-info">
             <strong :class="{ strikethrough: m.completed }">{{ m.title }}</strong>
-            <span v-if="m.target_date" class="target">📅 {{ fmtDate(m.target_date) }}</span>
+            <span v-if="m.target_date" class="target"><Calendar :size="14" :stroke-width="2" class="inline-icon" /> {{ fmtDate(m.target_date) }}</span>
           </div>
         </div>
       </div>
@@ -56,6 +56,7 @@
 import { ref, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
+import { ClipboardList, Stethoscope, Calendar } from 'lucide-vue-next';
 
 const api = useApi();
 const plans = ref<any[]>([]);
@@ -138,4 +139,5 @@ function fmtDate(d: string) {
 .strikethrough { text-decoration: line-through; color: var(--text-muted); }
 .target { font-size: 11px; color: var(--text-muted); }
 .plan-footer { font-size: 12px; color: var(--text-muted); padding-top: 10px; border-top: 1px solid var(--border-light); }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

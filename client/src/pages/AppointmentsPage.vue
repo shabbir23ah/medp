@@ -14,7 +14,7 @@
     <div v-if="loading" class="state"><div class="spinner"></div></div>
 
     <div v-else-if="filteredAppts.length === 0" class="empty-state">
-      <div class="empty-icon">📅</div>
+      <div class="empty-icon"><Calendar :size="14" :stroke-width="2" class="inline-icon" /></div>
       <h2>No {{ tab }} appointments</h2>
       <p v-if="!auth.isDoctor && tab === 'upcoming'">Find a doctor and book your first appointment.</p>
       <router-link v-if="!auth.isDoctor && tab === 'upcoming'" to="/doctors" class="cta-btn">Browse Doctors</router-link>
@@ -54,7 +54,7 @@
         :to="`/chat/${a.id}`"
         class="btn-chat"
       >
-        💬 Open Chat
+        <MessageCircle :size="14" :stroke-width="2" class="inline-icon" /> Open Chat
       </router-link>
     </div>
   </AppLayout>
@@ -65,6 +65,7 @@ import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
 import { useAuthStore } from '../stores/auth';
+import { Calendar, MessageCircle } from 'lucide-vue-next';
 
 const api = useApi();
 const auth = useAuthStore();
@@ -165,4 +166,5 @@ function fmtTime(d: string) { return new Date(d).toLocaleTimeString([], { hour: 
   transition: transform 0.15s;
 }
 .btn-chat:hover { transform: scale(1.01); }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

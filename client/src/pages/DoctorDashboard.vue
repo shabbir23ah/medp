@@ -23,7 +23,7 @@
     <!-- Quick Rx Builder -->
     <div class="section-card">
       <div class="section-head">
-        <h3>💊 Quick Prescription Builder</h3>
+        <h3><Pill :size="16" :stroke-width="2" /> Quick Prescription Builder</h3>
       </div>
       <div class="rx-builder">
         <div class="rx-meds-input">
@@ -36,7 +36,8 @@
           </span>
         </div>
         <button v-if="rxDrugs.length >= 2" @click="checkDrugs" :disabled="checking" class="btn-check">
-          {{ checking ? 'Checking...' : '🔍 Check Interactions' }}
+          <Search :size="14" :stroke-width="2" v-if="!checking" />
+          {{ checking ? 'Checking...' : 'Check Interactions' }}
         </button>
         <div v-if="interactions.length > 0" class="interaction-results">
           <div v-for="(ix, i) in interactions" :key="i" class="interaction-item" :class="ix.severity">
@@ -51,7 +52,7 @@
 
     <div class="section-card">
       <div class="section-head">
-        <h3>📅 Today's Schedule</h3>
+        <h3><Calendar :size="16" :stroke-width="2" /> Today's Schedule</h3>
       </div>
       <div v-if="todayAppts.length === 0" class="empty">No appointments today</div>
       <div v-for="a in todayAppts" :key="a.id" class="apt-item">
@@ -76,7 +77,7 @@
 
     <div class="section-card">
       <div class="section-head">
-        <h3>👥 All Appointments</h3>
+        <h3><Users :size="16" :stroke-width="2" /> All Appointments</h3>
         <router-link to="/appointments" class="see-all">View all →</router-link>
       </div>
       <div v-if="allAppts.length === 0" class="empty">No appointments yet</div>
@@ -99,6 +100,7 @@ import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useAuthStore } from '../stores/auth';
 import { useApi } from '../composables/useApi';
+import { Pill, Search, Calendar, Users } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const api = useApi();
@@ -249,4 +251,5 @@ function fmtShort(d: string) {
 .interaction-item.moderate .ix-sev { color: var(--warning); }
 .interaction-item p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 .safe-msg { color: var(--success); font-size: 13px; font-weight: 600; text-align: center; padding: 8px; }
+h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
 </style>

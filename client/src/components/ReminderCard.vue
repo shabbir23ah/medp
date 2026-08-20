@@ -11,13 +11,14 @@
         <input type="checkbox" :checked="reminder.enabled" @change="$emit('toggle', reminder.id, !reminder.enabled)" />
         <span class="slider"></span>
       </label>
-      <button @click="$emit('delete', reminder.id)" class="del-btn">🗑</button>
+      <button @click="$emit('delete', reminder.id)" class="del-btn"><Trash2 :size="16" :stroke-width="2" /></button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Reminder } from '../stores/reminders';
+import { Trash2 } from 'lucide-vue-next';
 defineProps<{ reminder: Reminder }>();
 defineEmits<{ toggle: [id: string, enabled: boolean]; delete: [id: string] }>();
 

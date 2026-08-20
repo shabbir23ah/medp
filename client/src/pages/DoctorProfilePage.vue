@@ -32,7 +32,7 @@
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
-            <span class="stat-num">{{ doctor.video_enabled ? '📹' : '📞' }}</span>
+            <span class="stat-num"><component :is="doctor.video_enabled ? Video : Phone" :size="16" :stroke-width="2" /></span>
             <span class="stat-label">{{ doctor.video_enabled ? 'Video Call' : 'Phone Call' }}</span>
           </div>
         </div>
@@ -57,7 +57,7 @@
 
       <!-- Reviews -->
       <div class="section-card">
-        <h3>⭐ Patient Reviews ({{ rating.count }})</h3>
+        <h3><Star :size="16" :stroke-width="2" class="inline-icon" /> Patient Reviews ({{ rating.count }})</h3>
         <div v-if="reviews.length === 0" class="no-reviews">No reviews yet. Be the first to review this doctor.</div>
         <div v-for="r in reviews" :key="r.id" class="review-item">
           <div class="review-head">
@@ -113,6 +113,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Video, Phone, Star } from 'lucide-vue-next';
 import { useRoute, useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
@@ -338,4 +339,5 @@ textarea:focus { border-color: var(--primary); outline: none; }
 .btn-book:not(:disabled):hover { transform: scale(1.01); }
 .success-msg { text-align: center; color: var(--success); font-size: 14px; margin-top: 8px; font-weight: 600; }
 .error-msg { text-align: center; color: var(--danger); font-size: 13px; margin-top: 8px; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

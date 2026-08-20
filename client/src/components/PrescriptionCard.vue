@@ -17,7 +17,7 @@
         <span class="meta-value">{{ prescription.diagnosis }}</span>
       </div>
       <div class="card-footer" v-if="prescription.medicines?.length">
-        <span class="pill-count">💊 {{ prescription.medicines.length }} medicine{{ prescription.medicines.length > 1 ? 's' : '' }}</span>
+        <span class="pill-count"><Pill :size="13" :stroke-width="2" class="inline-icon" /> {{ prescription.medicines.length }} medicine{{ prescription.medicines.length > 1 ? 's' : '' }}</span>
         <span class="med-names">{{ prescription.medicines.map(m => m.name).join(', ') }}</span>
       </div>
     </div>
@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import type { Prescription } from '../stores/prescriptions';
+import { Pill } from 'lucide-vue-next';
 defineProps<{ prescription: Prescription }>();
 
 function formatDate(dateStr: string): string {
@@ -85,4 +86,5 @@ function formatDate(dateStr: string): string {
 .pill-count { font-size: 12px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
 .med-names { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-arrow { display: flex; align-items: center; padding: 0 12px; color: var(--text-muted); font-size: 18px; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

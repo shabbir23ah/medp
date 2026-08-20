@@ -7,7 +7,7 @@
 
     <!-- Search -->
     <div class="search-bar">
-      <span class="search-icon">🔍</span>
+      <Search class="search-icon" :size="16" :stroke-width="2" />
       <input
         v-model="search"
         placeholder="Search by name or specialization..."
@@ -37,7 +37,7 @@
     <!-- List -->
     <router-link v-for="d in filtered" :key="d.id" :to="`/doctors/${d.id}`" class="doc-card">
       <div class="doc-rank" v-if="d.consultation_fee">
-        <span class="rank-badge">⭐ Top Rated</span>
+        <span class="rank-badge"><Star :size="12" :stroke-width="2.5" class="rank-star" /> Top Rated</span>
       </div>
       <div class="doc-main">
         <div class="doc-avatar">
@@ -46,7 +46,7 @@
         <div class="doc-info">
           <div class="doc-name-row">
             <strong>{{ d.name || 'Unknown' }}</strong>
-            <span class="verified" v-if="d.license_number">✓ Verified</span>
+            <span class="verified" v-if="d.license_number"><CheckCircle :size="12" :stroke-width="2.5" /> Verified</span>
           </div>
           <span class="doc-spec">{{ d.specialization || 'General Practitioner' }}</span>
           <div class="doc-rating" v-if="d.rating && d.rating.count > 0">
@@ -55,7 +55,7 @@
             <span class="rating-count">({{ d.rating.count }})</span>
           </div>
           <div class="doc-meta">
-            <span class="meta-chip">📅 Available Today</span>
+            <span class="meta-chip"><Calendar :size="12" :stroke-width="2" /> Available Today</span>
             <span class="meta-chip fee">৳{{ d.consultation_fee || 0 }}</span>
           </div>
         </div>
@@ -69,6 +69,7 @@
 import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
+import { Search, Star, CheckCircle, Calendar } from 'lucide-vue-next';
 
 const api = useApi();
 const doctors = ref<any[]>([]);

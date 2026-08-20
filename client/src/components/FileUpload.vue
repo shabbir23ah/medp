@@ -12,7 +12,7 @@
       <button @click.stop="clear" class="clear-btn">✕</button>
     </template>
     <template v-else>
-      <span class="upload-icon">📷</span>
+      <Camera :size="28" :stroke-width="1.5" class="upload-icon" />
       <span>{{ label }}</span>
     </template>
   </div>
@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Camera } from 'lucide-vue-next';
 
 const props = defineProps<{ label?: string; modelValue?: File | null }>();
 const emit = defineEmits<{ 'update:modelValue': [file: File | null] }>();

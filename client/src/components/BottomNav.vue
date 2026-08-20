@@ -9,7 +9,7 @@
         active-class="active"
         exact
       >
-        <span class="nav-icon">{{ item.icon }}</span>
+        <component :is="item.icon" class="nav-icon" :size="20" :stroke-width="2.2" />
         <span class="nav-label">{{ item.label }}</span>
       </router-link>
     </nav>
@@ -20,6 +20,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/auth';
+import { Home, Stethoscope, ShoppingCart, Calendar, ClipboardList, User, LayoutDashboard, AlarmClock, Pill } from 'lucide-vue-next';
 
 const { t } = useI18n();
 const auth = useAuthStore();
@@ -27,25 +28,25 @@ const auth = useAuthStore();
 const items = computed(() => {
   if (auth.isDoctor) {
     return [
-      { to: '/dashboard', icon: '📊', label: 'Dashboard' },
-      { to: '/appointments', icon: '📅', label: 'Appointments' },
-      { to: '/reminders', icon: '⏰', label: 'Reminders' },
-      { to: '/profile', icon: '👤', label: 'Profile' },
+      { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/appointments', icon: Calendar, label: 'Appointments' },
+      { to: '/reminders', icon: AlarmClock, label: 'Reminders' },
+      { to: '/profile', icon: User, label: 'Profile' },
     ];
   }
   if (auth.user?.role === 'pharmacy') {
     return [
-      { to: '/pharmacy', icon: '💊', label: 'Catalog' },
-      { to: '/reminders', icon: '⏰', label: 'Reminders' },
-      { to: '/profile', icon: '👤', label: 'Profile' },
+      { to: '/pharmacy', icon: Pill, label: 'Catalog' },
+      { to: '/reminders', icon: AlarmClock, label: 'Reminders' },
+      { to: '/profile', icon: User, label: 'Profile' },
     ];
   }
   return [
-    { to: '/home', icon: '🏠', label: 'Home' },
-    { to: '/doctors', icon: '👨‍⚕️', label: 'Doctors' },
-    { to: '/shop', icon: '🛒', label: 'Shop' },
-    { to: '/plans', icon: '📋', label: 'Plans' },
-    { to: '/profile', icon: '👤', label: 'Profile' },
+    { to: '/home', icon: Home, label: 'Home' },
+    { to: '/doctors', icon: Stethoscope, label: 'Doctors' },
+    { to: '/shop', icon: ShoppingCart, label: 'Shop' },
+    { to: '/plans', icon: ClipboardList, label: 'Plans' },
+    { to: '/profile', icon: User, label: 'Profile' },
   ];
 });
 </script>
@@ -77,7 +78,7 @@ const items = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   padding: 8px 4px;
   border-radius: 16px;
   color: var(--text-muted);
@@ -88,7 +89,7 @@ const items = computed(() => {
   color: var(--primary);
   background: var(--primary-bg);
 }
-.nav-icon { font-size: 20px; line-height: 1; }
+.nav-icon { line-height: 1; }
 .nav-label { font-size: 10px; font-weight: 600; }
 
 @media (min-width: 768px) {

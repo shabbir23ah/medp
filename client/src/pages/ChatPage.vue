@@ -14,19 +14,19 @@
       <video ref="remoteVideo" autoplay playsinline class="remote-video"></video>
       <video ref="localVideo" autoplay playsinline muted class="local-video"></video>
       <div class="call-controls">
-        <button @click="toggleVideo" class="ctrl-btn">{{ videoOn ? '📹' : '📹‍🚫' }}</button>
-        <button @click="toggleAudio" class="ctrl-btn">{{ audioOn ? '🎤' : '🔇' }}</button>
-        <button @click="endCall" class="ctrl-btn end">📞 End</button>
+        <button @click="toggleVideo" class="ctrl-btn"><Video :size="16" :stroke-width="2" :class="{ off: !videoOn }" /></button>
+        <button @click="toggleAudio" class="ctrl-btn"><Mic :size="16" :stroke-width="2" :class="{ off: !audioOn }" /></button>
+        <button @click="endCall" class="ctrl-btn end"><PhoneOff :size="16" :stroke-width="2" /></button>
       </div>
     </div>
 
     <!-- Messages -->
     <div class="chat-box" ref="chatBox">
       <div v-for="m in messages" :key="m.id" :class="['msg', m.sender_id === userId ? 'me' : 'them']">
-        <div v-if="m.type === 'call_started'" class="call-msg">📞 Call started</div>
-        <div v-else-if="m.type === 'call_ended'" class="call-msg">📞 Call ended</div>
+        <div v-if="m.type === 'call_started'" class="call-msg"><Phone :size="12" :stroke-width="2" /> Call started</div>
+        <div v-else-if="m.type === 'call_ended'" class="call-msg"><PhoneOff :size="12" :stroke-width="2" /> Call ended</div>
         <div v-else-if="m.type === 'prescription'" class="rx-msg">
-          💊 <strong>Prescription shared</strong>
+          <Pill :size="14" :stroke-width="2" /> <strong>Prescription shared</strong>
           <p>{{ m.content }}</p>
         </div>
         <div v-else class="bubble">{{ m.content }}</div>
@@ -36,7 +36,7 @@
     </div>
 
     <div class="input-row">
-      <button @click="startCall" class="call-btn" title="Start call">📞</button>
+      <button @click="startCall" class="call-btn" title="Start call"><Phone :size="16" :stroke-width="2" /></button>
       <input v-model="text" @keyup.enter="sendText" placeholder="Type a message..." class="chat-input" />
       <button @click="sendText" class="send-btn">Send</button>
     </div>
@@ -47,6 +47,7 @@
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { io, Socket } from 'socket.io-client';
+import { Phone, PhoneOff, Video, Mic, Pill } from 'lucide-vue-next';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
 import { useAuthStore } from '../stores/auth';
@@ -326,4 +327,5 @@ onUnmounted(() => {
 .call-controls { display: flex; gap: 8px; justify-content: center; padding: 8px; }
 .ctrl-btn { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; border: none; font-size: 16px; cursor: pointer; }
 .ctrl-btn.end { background: #ef4444; }
+.ctrl-btn svg.off { opacity: 0.4; }
 </style>

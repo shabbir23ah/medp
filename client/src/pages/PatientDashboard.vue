@@ -8,17 +8,17 @@
     <!-- Quick Stats -->
     <div class="stats-row">
       <div class="stat-card accent" @click="$router.push('/timeline')">
-        <span class="stat-icon">📋</span>
+        <ClipboardList class="stat-icon" :size="22" :stroke-width="2" />
         <span class="stat-num">{{ stats.prescriptions }}</span>
         <span class="stat-label">Prescriptions</span>
       </div>
       <div class="stat-card" @click="$router.push('/appointments')">
-        <span class="stat-icon">📅</span>
+        <Calendar class="stat-icon" :size="22" :stroke-width="2" />
         <span class="stat-num">{{ stats.appointments }}</span>
         <span class="stat-label">Appointments</span>
       </div>
       <div class="stat-card" @click="$router.push('/reminders')">
-        <span class="stat-icon">⏰</span>
+        <AlarmClock class="stat-icon" :size="22" :stroke-width="2" />
         <span class="stat-num">{{ stats.reminders }}</span>
         <span class="stat-label">Reminders</span>
       </div>
@@ -27,15 +27,15 @@
     <!-- Quick Actions -->
     <div class="actions-row">
       <router-link to="/upload" class="action-btn">
-        <span class="action-icon">📸</span>
+        <Camera class="action-icon" :size="24" :stroke-width="2" />
         <span>Upload Prescription</span>
       </router-link>
       <router-link to="/doctors" class="action-btn">
-        <span class="action-icon">👨‍⚕️</span>
+        <Stethoscope class="action-icon" :size="24" :stroke-width="2" />
         <span>Find Doctor</span>
       </router-link>
       <router-link to="/appointments" class="action-btn">
-        <span class="action-icon">📅</span>
+        <Calendar class="action-icon" :size="24" :stroke-width="2" />
         <span>Appointments</span>
       </router-link>
     </div>
@@ -43,12 +43,12 @@
     <!-- Upcoming Reminders -->
     <div class="section-card">
       <div class="section-head">
-        <h3>⏰ Upcoming Reminders</h3>
+        <h3><AlarmClock :size="16" :stroke-width="2" /> Upcoming Reminders</h3>
         <router-link to="/reminders" class="see-all">See all →</router-link>
       </div>
       <div v-if="upcomingReminders.length === 0" class="empty">No upcoming reminders</div>
       <div v-for="r in upcomingReminders" :key="r.id" class="reminder-item">
-        <span class="rem-type">{{ r.type === 'medicine' ? '💊' : r.type === 'appointment' ? '📅' : '🔔' }}</span>
+        <component :is="r.type === 'medicine' ? Pill : r.type === 'appointment' ? Calendar : Bell" class="rem-type" :size="18" :stroke-width="2" />
         <div class="rem-info">
           <strong>{{ r.title }}</strong>
           <span>{{ fmtDate(r.datetime) }}</span>
@@ -59,7 +59,7 @@
     <!-- Recent Prescriptions -->
     <div class="section-card">
       <div class="section-head">
-        <h3>📋 Recent Prescriptions</h3>
+        <h3><ClipboardList :size="16" :stroke-width="2" /> Recent Prescriptions</h3>
         <router-link to="/timeline" class="see-all">View all →</router-link>
       </div>
       <div v-if="recentRx.length === 0" class="empty">
@@ -77,6 +77,7 @@ import AppLayout from '../components/AppLayout.vue';
 import PrescriptionCard from '../components/PrescriptionCard.vue';
 import { useAuthStore } from '../stores/auth';
 import { useApi } from '../composables/useApi';
+import { ClipboardList, Calendar, AlarmClock, Camera, Stethoscope, Pill, Bell } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const api = useApi();
@@ -159,4 +160,5 @@ function fmtDate(d: string) {
 
 .empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
 .cta-link { color: var(--primary); font-weight: 600; font-size: 13px; }
+h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
 </style>

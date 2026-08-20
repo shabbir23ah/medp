@@ -3,7 +3,7 @@
     <!-- Desktop sidebar -->
     <aside class="sidebar">
       <div class="sidebar-brand" @click="$router.push('/timeline')">
-        <span class="brand-icon">💊</span>
+        <Pill class="brand-icon" :size="24" :stroke-width="2.2" />
         <span class="brand-name">MedPrescription</span>
       </div>
       <nav class="sidebar-nav">
@@ -15,13 +15,13 @@
           active-class="active"
           exact
         >
-          <span class="sidebar-icon">{{ item.icon }}</span>
+          <component :is="item.icon" class="sidebar-icon" :size="18" :stroke-width="2" />
           <span class="sidebar-label">{{ item.label }}</span>
         </router-link>
       </nav>
       <div class="sidebar-footer">
         <button class="sidebar-item" @click="theme.toggle()">
-          <span class="sidebar-icon">{{ theme.isDark.value ? '☀️' : '🌙' }}</span>
+          <component :is="theme.isDark.value ? Sun : Moon" class="sidebar-icon" :size="18" :stroke-width="2" />
           <span class="sidebar-label">{{ theme.isDark.value ? 'Light' : 'Dark' }}</span>
         </button>
         <router-link to="/profile" class="sidebar-item" active-class="active">
@@ -42,7 +42,7 @@
         </div>
         <div class="topbar-right">
           <button class="icon-btn" @click="theme.toggle()">
-            {{ theme.isDark.value ? '☀️' : '🌙' }}
+            <component :is="theme.isDark.value ? Sun : Moon" :size="18" :stroke-width="2" />
           </button>
         </div>
       </header>
@@ -63,6 +63,7 @@ import BottomNav from './BottomNav.vue';
 import { useAuthStore } from '../stores/auth';
 import { useTheme } from '../composables/useTheme';
 import { useI18n } from 'vue-i18n';
+import { Home, Stethoscope, ShoppingCart, ClipboardList, Calendar, Upload, LayoutDashboard, AlarmClock, Pill, Sun, Moon, User } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const theme = useTheme();
@@ -78,24 +79,24 @@ const greeting = computed(() => {
 const navItems = computed(() => {
   if (auth.isDoctor) {
     return [
-      { to: '/dashboard', icon: '📊', label: 'Dashboard' },
-      { to: '/appointments', icon: '📅', label: 'Appointments' },
-      { to: '/reminders', icon: '⏰', label: 'Reminders' },
+      { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/appointments', icon: Calendar, label: 'Appointments' },
+      { to: '/reminders', icon: AlarmClock, label: 'Reminders' },
     ];
   }
   if (auth.user?.role === 'pharmacy') {
     return [
-      { to: '/pharmacy', icon: '💊', label: 'Catalog' },
-      { to: '/reminders', icon: '⏰', label: 'Reminders' },
+      { to: '/pharmacy', icon: Pill, label: 'Catalog' },
+      { to: '/reminders', icon: AlarmClock, label: 'Reminders' },
     ];
   }
   return [
-    { to: '/home', icon: '🏠', label: 'Home' },
-    { to: '/doctors', icon: '👨‍⚕️', label: 'Find Doctor' },
-    { to: '/shop', icon: '🛒', label: 'Shop' },
-    { to: '/plans', icon: '📋', label: 'Treatment Plans' },
-    { to: '/appointments', icon: '📅', label: 'Appointments' },
-    { to: '/upload', icon: '➕', label: 'Upload' },
+    { to: '/home', icon: Home, label: 'Home' },
+    { to: '/doctors', icon: Stethoscope, label: 'Find Doctor' },
+    { to: '/shop', icon: ShoppingCart, label: 'Shop' },
+    { to: '/plans', icon: ClipboardList, label: 'Treatment Plans' },
+    { to: '/appointments', icon: Calendar, label: 'Appointments' },
+    { to: '/upload', icon: Upload, label: 'Upload' },
   ];
 });
 </script>

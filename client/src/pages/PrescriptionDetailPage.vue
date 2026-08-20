@@ -15,11 +15,11 @@
           <span>{{ prescription.hospital }}</span>
         </div>
         <div class="field">
-          <span class="label">📅 Date</span>
+          <span class="label"><Calendar :size="14" :stroke-width="2" class="inline-icon" /> Date</span>
           <span>{{ prescription.prescribed_date }}</span>
         </div>
         <div class="field" v-if="prescription.diagnosis">
-          <span class="label">🩺 Diagnosis</span>
+          <span class="label"><Stethoscope :size="14" :stroke-width="2" class="inline-icon" /> Diagnosis</span>
           <span>{{ prescription.diagnosis }}</span>
         </div>
         <div class="field" v-if="prescription.notes">
@@ -29,7 +29,7 @@
       </div>
 
       <div class="medicines-section" v-if="prescription.medicines?.length">
-        <h3>💊 {{ $t('prescription.medicines') }}</h3>
+        <h3><Pill :size="14" :stroke-width="2" class="inline-icon" /> {{ $t('prescription.medicines') }}</h3>
         <div v-for="med in prescription.medicines" :key="med.id" class="medicine-item">
           <strong>{{ med.name }}</strong>
           <span v-if="med.dosage"> — {{ med.dosage }}</span>
@@ -55,6 +55,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import { usePrescriptionsStore, type Prescription } from '../stores/prescriptions';
+import { Calendar, Stethoscope, Pill } from 'lucide-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -93,4 +94,5 @@ async function handleDelete() {
 .medicine-item:last-child { border-bottom: none; }
 .med-extra { font-size: 13px; color: var(--color-text-muted); margin-top: 4px; }
 .btn-danger { width: 100%; padding: 14px; background: var(--color-danger); color: white; border-radius: 8px; font-weight: 600; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

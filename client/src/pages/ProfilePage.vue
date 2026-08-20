@@ -5,7 +5,7 @@
       <div class="avatar-lg">
         <img v-if="auth.user?.profilePic" :src="auth.user.profilePic" alt="" />
         <span v-else class="avatar-initial">{{ (auth.user?.name || 'U')[0].toUpperCase() }}</span>
-        <div class="avatar-overlay">📷</div>
+        <div class="avatar-overlay"><Camera :size="14" :stroke-width="2" class="inline-icon" /></div>
       </div>
       <p class="hint">Tap to change photo</p>
       <input ref="picInput" type="file" accept="image/*" hidden @change="handlePicChange" />
@@ -50,6 +50,7 @@ import { ref, reactive } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useAuthStore } from '../stores/auth';
 import { useApi } from '../composables/useApi';
+import { Camera } from 'lucide-vue-next';
 const auth = useAuthStore();
 const api = useApi();
 const form = reactive({ name: auth.user?.name || '', email: auth.user?.email || '', nid: auth.user?.nid || '', dob: auth.user?.dob || '' });
@@ -91,4 +92,5 @@ async function handleSave() {
 .btn-primary:active { transform: scale(0.97); }
 .success { text-align: center; color: var(--success); font-size: 13px; margin-top: 12px; font-weight: 600; }
 .btn-logout { width: 100%; padding: 12px; border: 1.5px solid var(--danger); color: var(--danger); border-radius: 14px; font-weight: 600; font-size: 14px; }
+.inline-icon { display: inline-block; vertical-align: -2px; }
 </style>
