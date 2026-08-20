@@ -60,6 +60,7 @@ router.put('/profile', async (req: AuthRequest, res) => {
       dob: user.dob,
       profilePic: user.profile_pic,
       language: user.language,
+      role: user.role,
     },
   });
 });
@@ -85,6 +86,7 @@ router.put('/profile/picture', upload.single('picture'), async (req: AuthRequest
       dob: user.dob,
       profilePic: user.profile_pic,
       language: user.language,
+      role: user.role,
     },
   });
 });

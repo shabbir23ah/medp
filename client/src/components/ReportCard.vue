@@ -18,10 +18,10 @@ defineEmits<{ view: [report: Report]; delete: [id: string] }>();
 </script>
 
 <style scoped>
-.card { display: flex; gap: 12px; align-items: center; background: var(--color-surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px; margin-bottom: 12px; }
+.card { display: flex; gap: 12px; align-items: center; background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px; margin-bottom: 12px; }
 .thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer; }
 .info { flex: 1; }
-.sub { color: var(--color-text-muted); font-size: 13px; }
-.date { color: var(--color-primary); font-size: 13px; }
+.sub { color: var(--text-muted); font-size: 13px; }
+.date { color: var(--primary); font-size: 13px; }
 .del-btn { background: none; font-size: 18px; padding: 4px 8px; }
 </style>

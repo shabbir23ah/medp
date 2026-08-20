@@ -83,16 +83,16 @@ async function handleDelete() {
 </script>
 
 <style scoped>
-.center { text-align: center; padding: 40px 0; color: var(--color-text-muted); }
+.center { text-align: center; padding: 40px 0; color: var(--text-muted); }
 .full-image { width: 100%; border-radius: var(--radius); margin-bottom: 16px; }
-.meta { background: var(--color-surface); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+.meta { background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
 .field { margin-bottom: 12px; }
-.label { display: block; font-size: 12px; color: var(--color-text-muted); margin-bottom: 2px; text-transform: uppercase; }
-.medicines-section { background: var(--color-surface); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+.label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; }
+.medicines-section { background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
 .medicines-section h3 { margin-bottom: 12px; }
-.medicine-item { padding: 10px 0; border-bottom: 1px solid var(--color-border); }
+.medicine-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .medicine-item:last-child { border-bottom: none; }
-.med-extra { font-size: 13px; color: var(--color-text-muted); margin-top: 4px; }
-.btn-danger { width: 100%; padding: 14px; background: var(--color-danger); color: white; border-radius: 8px; font-weight: 600; }
+.med-extra { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.btn-danger { width: 100%; padding: 14px; background: var(--danger); color: white; border-radius: 8px; font-weight: 600; }
 .inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

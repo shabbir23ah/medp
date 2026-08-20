@@ -67,7 +67,22 @@ async function handlePicChange(e: Event) {
 }
 async function handleSave() {
   saving.value = true; success.value = false;
-  try { const { data } = await api.put('/user/profile', form); if (data.ok) { auth.user = data.data; success.value = true; setTimeout(() => success.value = false, 3000); } }
+  try {
+    // Send null for empty optional fields so zod .nullable() passes
+    const payload: any = { name: form.name };
+    payload.email = form.email || null;
+    payload.nid = form.nid || null;
+    payload.dob = form.dob || null;
+    const { data } = await api.put('/user/profile', payload);
+    if (data.ok) {
+      auth.user = { ...auth.user, ...data.data };
+      success.value = true;
+      setTimeout(() => success.value = false, 3000);
+    }
+  } catch (e: any) {
+    success.value = false;
+    alert(e.response?.data?.error || 'Failed to save');
+  }
   finally { saving.value = false; }
 }
 </script>

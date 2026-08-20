@@ -85,13 +85,15 @@ async function fetchDoctors() {
     const { data } = await api.get('/doctors', { params });
     if (data.ok) {
       doctors.value = data.data;
-      // Fetch ratings for each doctor
-      for (const d of doctors.value) {
-        try {
-          const r = await api.get(`/enhancements/doctors/${d.id}/reviews`);
-          if (r.data.ok) d.rating = r.data.data.rating;
-        } catch {}
-      }
+      // Fetch all ratings in parallel — no N+1 blocking
+      const results = await Promise.all(
+        doctors.value.map((d: any) =>
+          api.get(`/enhancements/doctors/${d.id}/reviews`).catch(() => null)
+        )
+      );
+      results.forEach((r: any, i: number) => {
+        if (r?.data?.ok) doctors.value[i].rating = r.data.data.rating;
+      });
     }
   } finally {
     loading.value = false;

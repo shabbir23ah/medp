@@ -27,14 +27,14 @@ function switchTo(code: Locale) {
 .lang-switcher { display: flex; gap: 8px; flex-wrap: wrap; }
 .lang-switcher button {
   padding: 8px 16px;
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--border);
   border-radius: 8px;
-  background: var(--color-surface);
+  background: var(--surface);
   font-size: 14px;
 }
 .lang-switcher button.active {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
+  border-color: var(--primary);
+  background: var(--primary);
   color: white;
 }
 </style>

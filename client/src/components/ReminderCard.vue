@@ -38,13 +38,13 @@ function formatDateTime(dt: string): string {
 .type-badge.appointment { background: #fce7f3; color: #be185d; }
 .type-badge.revisit { background: #d1fae5; color: #047857; }
 .type-badge.report { background: #fef3c7; color: #b45309; }
-.datetime { color: var(--color-text-muted); font-size: 13px; }
-.repeat { color: var(--color-primary); font-size: 12px; }
+.datetime { color: var(--text-muted); font-size: 13px; }
+.repeat { color: var(--primary); font-size: 12px; }
 .actions { display: flex; align-items: center; gap: 8px; }
 .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
 .toggle input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; transition: 0.3s; }
-.toggle input:checked + .slider { background: var(--color-primary); }
+.toggle input:checked + .slider { background: var(--primary); }
 .slider::before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
 .toggle input:checked + .slider::before { transform: translateX(20px); }
 .del-btn { background: none; font-size: 18px; padding: 4px; }

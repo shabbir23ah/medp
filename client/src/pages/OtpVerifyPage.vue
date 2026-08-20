@@ -62,7 +62,7 @@ async function handleVerify() {
   padding: 20px;
 }
 .login-card {
-  background: var(--color-surface);
+  background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 40px 32px;
@@ -70,8 +70,8 @@ async function handleVerify() {
   max-width: 400px;
   text-align: center;
 }
-h1 { color: var(--color-primary); margin-bottom: 4px; }
-.tagline { color: var(--color-text-muted); margin-bottom: 32px; }
+h1 { color: var(--primary); margin-bottom: 4px; }
+.tagline { color: var(--text-muted); margin-bottom: 32px; }
 .code-input {
   width: 100%;
   padding: 14px 16px;
@@ -80,22 +80,22 @@ h1 { color: var(--color-primary); margin-bottom: 4px; }
   letter-spacing: 12px;
 }
 .input {
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--border);
   border-radius: 8px;
   margin-bottom: 16px;
   outline: none;
   font-size: 16px;
 }
-.input:focus { border-color: var(--color-primary); }
+.input:focus { border-color: var(--primary); }
 .btn-primary {
   width: 100%;
   padding: 14px;
-  background: var(--color-primary);
+  background: var(--primary);
   color: white;
   border-radius: 8px;
   font-weight: 600;
   font-size: 16px;
 }
 .btn-primary:disabled { opacity: 0.6; }
-.error { color: var(--color-danger); margin-top: 12px; }
+.error { color: var(--danger); margin-top: 12px; }
 </style>

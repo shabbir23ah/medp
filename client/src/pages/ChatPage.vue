@@ -290,24 +290,24 @@ onUnmounted(() => {
 .bubble {
   padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.4;
 }
-.me .bubble { background: var(--color-primary); color: white; border-bottom-right-radius: 4px; }
-.them .bubble { background: var(--color-border); color: var(--color-text); border-bottom-left-radius: 4px; }
-.time { font-size: 10px; color: var(--color-text-muted); margin-top: 2px; padding: 0 4px; }
-.call-msg { text-align: center; font-size: 12px; color: var(--color-text-muted); padding: 8px; }
+.me .bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+.them .bubble { background: var(--border); color: var(--text); border-bottom-left-radius: 4px; }
+.time { font-size: 10px; color: var(--text-muted); margin-top: 2px; padding: 0 4px; }
+.call-msg { text-align: center; font-size: 12px; color: var(--text-muted); padding: 8px; }
 .rx-msg { background: #fef3c7; padding: 12px; border-radius: 10px; margin: 8px 0; }
 .rx-msg p { margin-top: 4px; font-size: 13px; }
-.center { text-align: center; padding: 40px; color: var(--color-text-muted); }
+.center { text-align: center; padding: 40px; color: var(--text-muted); }
 .input-row {
   display: flex; gap: 8px; padding: 12px 0; align-items: center;
-  position: sticky; bottom: 0; background: var(--color-bg);
+  position: sticky; bottom: 0; background: var(--bg);
 }
 .chat-input {
-  flex: 1; padding: 10px; border: 2px solid var(--color-border);
+  flex: 1; padding: 10px; border: 2px solid var(--border);
   border-radius: 10px; font-size: 14px; outline: none;
 }
-.chat-input:focus { border-color: var(--color-primary); }
+.chat-input:focus { border-color: var(--primary); }
 .send-btn, .call-btn {
-  padding: 10px 16px; background: var(--color-primary); color: white;
+  padding: 10px 16px; background: var(--primary); color: white;
   border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
 }
 .call-btn { font-size: 18px; padding: 10px 14px; }

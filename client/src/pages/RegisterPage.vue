@@ -24,40 +24,46 @@
         <p v-if="error" class="error">{{ error }}</p>
       </div>
 
-      <!-- Step 3: Choose Role -->
-      <div v-if="step === 3">
-        <label>I am a...</label>
-        <div class="role-grid">
-          <button
-            v-for="r in roles"
-            :key="r.value"
-            :class="['role-card', { active: selectedRole === r.value }]"
-            @click="selectedRole = r.value"
-          >
-            <span class="role-icon">{{ r.icon }}</span>
-            <span class="role-name">{{ r.label }}</span>
-          </button>
-        </div>
-
-        <!-- Doctor fields -->
-        <div v-if="selectedRole === 'doctor'" class="extra-fields">
-          <label>Full Name</label>
-          <input v-model="name" class="input" placeholder="Dr. Your Name" />
-          <label>Specialization</label>
-          <input v-model="specialization" class="input" placeholder="e.g. Cardiologist" />
-        </div>
-
-        <!-- Patient fields -->
-        <div v-if="selectedRole === 'patient'" class="extra-fields">
-          <label>Full Name</label>
-          <input v-model="name" class="input" placeholder="Your full name" />
-        </div>
-
-        <button @click="register" :disabled="!selectedRole || registering" class="btn-primary">
-          {{ registering ? 'Creating...' : 'Create Account' }}
+    <!-- Step 3: Choose Role -->
+    <div v-if="step === 3">
+      <label>I am a...</label>
+      <div class="role-grid">
+        <button
+          v-for="r in roles"
+          :key="r.value"
+          :class="['role-card', { active: selectedRole === r.value }]"
+          @click="selectedRole = r.value"
+        >
+          <span class="role-icon">{{ r.icon }}</span>
+          <span class="role-name">{{ r.label }}</span>
         </button>
-        <p v-if="error" class="error">{{ error }}</p>
       </div>
+
+      <!-- Doctor fields -->
+      <div v-if="selectedRole === 'doctor'" class="extra-fields">
+        <label>Full Name</label>
+        <input v-model="name" class="input" placeholder="Dr. Your Name" />
+        <label>Specialization</label>
+        <input v-model="specialization" class="input" placeholder="e.g. Cardiologist" />
+      </div>
+
+      <!-- Patient fields -->
+      <div v-if="selectedRole === 'patient'" class="extra-fields">
+        <label>Full Name</label>
+        <input v-model="name" class="input" placeholder="Your full name" />
+      </div>
+
+      <!-- Pharmacy fields -->
+      <div v-if="selectedRole === 'pharmacy'" class="extra-fields">
+        <label>Pharmacy Name</label>
+        <input v-model="name" class="input" placeholder="e.g. MedPlus Pharmacy" />
+      </div>
+
+      <button @click="register" :disabled="!selectedRole || registering" class="btn-primary">
+        {{ registering ? 'Creating...' : 'Create Account' }}
+      </button>
+      <p v-if="error" class="error">{{ error }}</p>
+    </div>
     </div>
   </div>
 </template>
@@ -92,6 +98,7 @@ onMounted(() => {
 const roles = [
   { value: 'patient', label: 'Patient', icon: '👤' },
   { value: 'doctor', label: 'Doctor', icon: '👨‍⚕️' },
+  { value: 'pharmacy', label: 'Pharmacy', icon: '🏪' },
 ];
 
 async function sendOtp() {
@@ -152,36 +159,38 @@ async function register() {
 <style scoped>
 .register-page {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  padding: 20px; background: var(--color-bg);
+  padding: 20px; background: var(--bg);
 }
 .card {
-  background: var(--color-surface); border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: var(--shadow);
   padding: 40px 32px; width: 100%; max-width: 440px;
 }
-h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-.sub { color: var(--color-text-muted); margin-bottom: 28px; }
-label { display: block; font-weight: 500; margin-bottom: 6px; font-size: 14px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+.sub { color: var(--text-muted); margin-bottom: 28px; }
+label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
 .input {
-  width: 100%; padding: 12px; border: 2px solid var(--color-border);
-  border-radius: 8px; font-size: 15px; outline: none; margin-bottom: 14px;
+  width: 100%; padding: 12px; border: 1.5px solid var(--border);
+  border-radius: 12px; font-size: 15px; outline: none; margin-bottom: 14px;
+  background: var(--bg); color: var(--text);
 }
-.input:focus { border-color: var(--color-primary); }
+.input:focus { border-color: var(--primary); }
 .code-input { text-align: center; font-size: 24px; letter-spacing: 10px; }
 .btn-primary {
-  width: 100%; padding: 14px; background: var(--color-primary); color: white;
-  border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer;
+  width: 100%; padding: 14px; background: var(--primary); color: var(--primary-text);
+  border: none; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer;
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.error { color: var(--color-danger); margin-top: 10px; font-size: 13px; }
-.role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.error { color: var(--danger); margin-top: 10px; font-size: 13px; }
+.role-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 .role-card {
-  padding: 24px; border: 2px solid var(--color-border); border-radius: 12px;
-  background: var(--color-surface); cursor: pointer; text-align: center;
+  padding: 20px 12px; border: 2px solid var(--border); border-radius: 12px;
+  background: var(--surface); cursor: pointer; text-align: center;
   transition: all 0.2s;
 }
-.role-card:hover { border-color: var(--color-primary); }
-.role-card.active { border-color: var(--color-primary); background: rgba(8,145,178,0.05); }
+.role-card:hover { border-color: var(--primary); }
+.role-card.active { border-color: var(--primary); background: var(--primary-bg); }
 .role-icon { font-size: 28px; display: block; margin-bottom: 8px; }
-.role-name { font-weight: 600; }
+.role-name { font-weight: 600; color: var(--text); }
 .extra-fields { margin-bottom: 16px; }
 </style>

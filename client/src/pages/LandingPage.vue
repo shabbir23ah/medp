@@ -339,14 +339,14 @@ const demoItems = computed(() => [
 
 <style scoped>
 .landing {
-  --c-primary: #0891b2;
-  --c-primary-dark: #0e7490;
-  --c-accent: #06b6d4;
-  --c-bg: #fafbfc;
-  --c-surface: #ffffff;
-  --c-text: #0f172a;
-  --c-muted: #64748b;
-  --c-border: #e2e8f0;
+  --c-primary: var(--primary, #0891b2);
+  --c-primary-dark: var(--primary-dark, #0e7490);
+  --c-accent: var(--primary-light, #06b6d4);
+  --c-bg: var(--bg, #fafbfc);
+  --c-surface: var(--surface, #ffffff);
+  --c-text: var(--text, #0f172a);
+  --c-muted: var(--text-muted, #64748b);
+  --c-border: var(--border, #e2e8f0);
   --c-green: #10b981;
   --c-purple: #8b5cf6;
   --c-amber: #f59e0b;
@@ -464,7 +464,7 @@ const demoItems = computed(() => [
 .hero {
   position: relative; z-index: 1;
   padding: 160px 24px 120px;
-  background: linear-gradient(180deg, #f0fdfa 0%, var(--c-bg) 100%);
+  background: linear-gradient(180deg, var(--c-surface) 0%, var(--c-bg) 100%);
   overflow: hidden;
 }
 .hero-bg-shapes { position: absolute; inset: 0; pointer-events: none; }
@@ -601,7 +601,7 @@ const demoItems = computed(() => [
 }
 .phone-screen {
   width: 100%; height: 100%;
-  background: #f8fafc;
+  background: var(--c-bg-secondary, #f8fafc);
   border-radius: 28px;
   padding: 48px 14px 16px;
   display: flex; flex-direction: column; gap: 10px;
@@ -619,7 +619,7 @@ const demoItems = computed(() => [
 }
 .app-title { font-size: 14px; font-weight: 700; color: #1e293b; }
 .app-card {
-  background: #fff; border-radius: 12px; padding: 10px;
+  background: var(--c-surface); border-radius: 12px; padding: 10px;
   display: flex; gap: 10px; align-items: center;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   animation: cardSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -655,7 +655,7 @@ const demoItems = computed(() => [
   box-shadow: 0 8px 30px rgba(0,0,0,0.1);
   white-space: nowrap;
   display: flex; align-items: center; gap: 6px;
-  background: #fff;
+  background: var(--c-surface);
   pointer-events: none;
 }
 .badge-reminder {
@@ -763,7 +763,7 @@ const demoItems = computed(() => [
 .how {
   position: relative; z-index: 1;
   padding: 100px 24px;
-  background: linear-gradient(180deg, var(--c-bg) 0%, #f8fafc 50%, var(--c-bg) 100%);
+  background: linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg-secondary, #f8fafc) 50%, var(--c-bg) 100%);
   overflow: hidden;
 }
 .how-bg {
@@ -841,7 +841,7 @@ const demoItems = computed(() => [
   box-shadow: 16px 0 0 rgba(255,255,255,0.4), 32px 0 0 rgba(255,255,255,0.4);
 }
 .demo-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-.demo-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #f8fafc; border-radius: 10px; }
+.demo-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--c-bg-secondary, #f8fafc); border-radius: 10px; }
 .demo-dot { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; }
 .c1 { background: linear-gradient(135deg, #0891b2, #06b6d4); }
 .c2 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }

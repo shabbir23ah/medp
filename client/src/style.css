@@ -64,6 +64,7 @@ html {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
+  background: var(--bg);
 }
 
 body {
@@ -73,6 +74,7 @@ body {
   line-height: 1.5;
   transition: background 0.3s, color 0.3s;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 button {
   cursor: pointer;
