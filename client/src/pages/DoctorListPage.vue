@@ -85,7 +85,8 @@ async function fetchDoctors() {
     const { data } = await api.get('/doctors', { params });
     if (data.ok) {
       doctors.value = data.data;
-      // Fetch all ratings in parallel — no N+1 blocking
+      // Show list immediately — ratings load in background, non-blocking
+      loading.value = false;
       const results = await Promise.all(
         doctors.value.map((d: any) =>
           api.get(`/enhancements/doctors/${d.id}/reviews`).catch(() => null)
@@ -94,6 +95,7 @@ async function fetchDoctors() {
       results.forEach((r: any, i: number) => {
         if (r?.data?.ok) doctors.value[i].rating = r.data.data.rating;
       });
+      return;
     }
   } finally {
     loading.value = false;
@@ -138,6 +140,9 @@ onMounted(fetchDoctors);
   font-size: 15px;
   outline: none;
   min-width: 0;
+  color: var(--text) !important;
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--primary);
 }
 .filter-select {
   padding: 10px 14px;

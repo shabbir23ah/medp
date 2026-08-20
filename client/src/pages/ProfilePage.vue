@@ -102,6 +102,20 @@ async function handleSave() {
 .value { font-size: 14px; font-weight: 600; }
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+.field input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field input[type="date"] {
+  min-height: 48px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--bg);
+  color: var(--text);
+}
 .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: var(--primary-text); border-radius: 14px; font-weight: 700; font-size: 15px; transition: transform 0.15s; }
 .btn-primary:disabled { opacity: 0.5; }
 .btn-primary:active { transform: scale(0.97); }

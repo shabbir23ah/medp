@@ -29,8 +29,20 @@
       :key="r.id"
       :reminder="r"
       @toggle="(id, enabled) => store.toggleReminder(id, enabled)"
-      @delete="handleDelete"
+      @delete="askDelete"
     />
+
+    <!-- Inline confirm dialog -->
+    <div v-if="confirmDeleteId" class="confirm-overlay" @click.self="confirmDeleteId = ''">
+      <div class="confirm-dialog">
+        <h4>Delete this reminder?</h4>
+        <p>This cannot be undone.</p>
+        <div class="confirm-actions">
+          <button @click="confirmDeleteId = ''" class="btn-cancel">Cancel</button>
+          <button @click="doDelete" class="btn-delete">Delete</button>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>
 
@@ -42,6 +54,8 @@ import { useRemindersStore } from '../stores/reminders';
 
 const store = useRemindersStore();
 onMounted(() => store.fetchReminders());
+
+const confirmDeleteId = ref('');
 
 const newReminder = reactive({
   type: 'medicine',
@@ -56,8 +70,14 @@ async function handleAdd() {
   newReminder.datetime = '';
 }
 
-async function handleDelete(id: string) {
-  if (confirm('Delete this reminder?')) await store.deleteReminder(id);
+function askDelete(id: string) {
+  confirmDeleteId.value = id;
+}
+
+async function doDelete() {
+  if (!confirmDeleteId.value) return;
+  await store.deleteReminder(confirmDeleteId.value);
+  confirmDeleteId.value = '';
 }
 </script>
 
@@ -68,4 +88,18 @@ async function handleDelete(id: string) {
 .btn-primary { padding: 14px; background: var(--primary); color: var(--primary-text); border-radius: 12px; font-weight: 700; font-size: 15px; }
 .btn-primary:disabled { opacity: 0.5; }
 .center { text-align: center; padding: 32px 0; color: var(--text-muted); }
+.confirm-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.confirm-dialog {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; width: 100%; max-width: 320px; text-align: center;
+}
+.confirm-dialog h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.confirm-dialog p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+.confirm-actions { display: flex; gap: 10px; }
+.btn-cancel, .btn-delete { flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; }
+.btn-cancel { background: var(--bg-secondary); color: var(--text); }
+.btn-delete { background: var(--danger); color: white; }
 </style>

@@ -150,12 +150,15 @@ const parsedHours = computed(() => {
 
 onMounted(async () => {
   try {
-    const { data } = await api.get(`/doctors/${route.params.id}`);
-    if (data.ok) doctor.value = data.data;
-    const r = await api.get(`/enhancements/doctors/${route.params.id}/reviews`);
-    if (r.data.ok) {
-      reviews.value = r.data.data.reviews;
-      rating.value = r.data.data.rating;
+    // Load doctor + reviews in parallel for speed
+    const [docRes, revRes] = await Promise.all([
+      api.get(`/doctors/${route.params.id}`),
+      api.get(`/enhancements/doctors/${route.params.id}/reviews`).catch(() => null),
+    ]);
+    if (docRes.data.ok) doctor.value = docRes.data.data;
+    if (revRes?.data?.ok) {
+      reviews.value = revRes.data.data.reviews;
+      rating.value = revRes.data.data.rating;
     }
   } finally { loading.value = false; }
 });

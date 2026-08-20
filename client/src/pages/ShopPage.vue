@@ -22,7 +22,16 @@
 
       <div class="checkout-form">
         <input v-model="deliveryAddress" placeholder="Delivery address" class="input" />
-        <input v-model="deliveryPhone" placeholder="Contact phone" class="input" />
+        <input
+          v-model="deliveryPhone"
+          placeholder="Contact phone (digits only)"
+          class="input"
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9+]*"
+          @input="deliveryPhone = deliveryPhone.replace(/[^0-9+]/g, '')"
+        />
+        <p v-if="phoneError" class="error">{{ phoneError }}</p>
         <button @click="placeOrder" :disabled="ordering || !deliveryAddress || !deliveryPhone" class="btn-order">
           {{ ordering ? 'Placing order...' : 'Place Order · ৳' + cartTotal }}
         </button>
@@ -105,6 +114,7 @@ const deliveryPhone = ref('');
 const ordering = ref(false);
 const orderSuccess = ref(false);
 const orderError = ref('');
+const phoneError = ref('');
 
 const cartTotal = computed(() => cart.value.reduce((s, i) => s + i.quantity * i.price, 0));
 
@@ -135,6 +145,13 @@ function removeFromCart(i: number) { cart.value.splice(i, 1); }
 
 async function placeOrder() {
   if (!deliveryAddress.value || !deliveryPhone.value) return;
+  // Validate phone: min 8 digits, max 15, only + and digits
+  const digits = deliveryPhone.value.replace(/[^0-9]/g, '');
+  if (digits.length < 8 || digits.length > 15) {
+    phoneError.value = 'Enter a valid phone number (8–15 digits)';
+    return;
+  }
+  phoneError.value = '';
   ordering.value = true;
   orderError.value = '';
   orderSuccess.value = false;
@@ -200,7 +217,7 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString(); }
 .tab { flex: 1; padding: 8px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text-muted); text-align: center; }
 .tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
 .search-bar { display: flex; gap: 8px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 16px; }
-.search-input { flex: 1; border: none; outline: none; font-size: 13px; background: transparent; color: var(--text); }
+.search-input { flex: 1; border: none; outline: none; font-size: 13px; background: transparent; color: var(--text) !important; -webkit-text-fill-color: var(--text); caret-color: var(--primary); }
 .filter-select { border: none; border-left: 1px solid var(--border); padding: 6px 8px; font-size: 12px; background: transparent; color: var(--text); }
 .state { text-align: center; padding: 40px; color: var(--text-muted); }
 .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto; }

@@ -41,12 +41,23 @@
         </div>
       </div>
 
-      <button @click="handleDelete" class="btn-danger">
+      <button @click="showDeleteConfirm = true" class="btn-danger">
         {{ $t('prescription.delete') }}
       </button>
     </div>
 
     <div v-else class="center">{{ $t('common.error') }}</div>
+
+    <!-- Inline confirm dialog -->
+    <div v-if="showDeleteConfirm" class="confirm-overlay" @click.self="showDeleteConfirm = false">
+      <div class="confirm-dialog">
+        <h4>{{ $t('prescription.confirmDelete') }}</h4>
+        <div class="confirm-actions">
+          <button @click="showDeleteConfirm = false" class="btn-cancel">{{ $t('common.cancel') }}</button>
+          <button @click="handleDelete" class="btn-delete">{{ $t('prescription.delete') }}</button>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>
 
@@ -63,6 +74,7 @@ const store = usePrescriptionsStore();
 
 const prescription = ref<Prescription | null>(null);
 const loading = ref(true);
+const showDeleteConfirm = ref(false);
 
 onMounted(async () => {
   try {
@@ -75,10 +87,8 @@ onMounted(async () => {
 });
 
 async function handleDelete() {
-  if (confirm('Delete this prescription?')) {
-    await store.deletePrescription(route.params.id as string);
-    router.push('/timeline');
-  }
+  await store.deletePrescription(route.params.id as string);
+  router.push('/timeline');
 }
 </script>
 
@@ -94,5 +104,18 @@ async function handleDelete() {
 .medicine-item:last-child { border-bottom: none; }
 .med-extra { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 .btn-danger { width: 100%; padding: 14px; background: var(--danger); color: white; border-radius: 8px; font-weight: 600; }
+.confirm-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.confirm-dialog {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; width: 100%; max-width: 320px; text-align: center;
+}
+.confirm-dialog h4 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+.confirm-actions { display: flex; gap: 10px; }
+.btn-cancel, .btn-delete { flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; }
+.btn-cancel { background: var(--bg-secondary); color: var(--text); }
+.btn-delete { background: var(--danger); color: white; }
 .inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

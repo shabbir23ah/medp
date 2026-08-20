@@ -161,4 +161,15 @@ function fmtDate(d: string) {
 .empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
 .cta-link { color: var(--primary); font-weight: 600; font-size: 13px; }
 h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
+
+/* Mobile: consistent card sizing */
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-card { padding: 14px 8px; }
+  .stat-num { font-size: 20px; }
+  .stat-label { font-size: 10px; letter-spacing: 0; }
+  .actions-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .action-btn { padding: 12px 6px; font-size: 11px; }
+  .action-icon { font-size: 20px; }
+}
 </style>
