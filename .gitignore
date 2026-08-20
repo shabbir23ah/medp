@@ -1,7 +1,42 @@
+# Dependencies
 node_modules/
+
+# Builds
 dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Uploaded files (keep .gitkeep)
 uploads/*
 !uploads/.gitkeep
-.env
+
+# Logs
 *.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+coverage/
+
+# Superpowers / agent scratch
+.superpowers/
+
+# Mimosa security scans
 .mimosa/
