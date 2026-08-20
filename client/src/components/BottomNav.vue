@@ -161,7 +161,7 @@ const items = computed(() => {
   top: 0; left: 8%; right: 8%;
   height: 50%;
   border-radius: 22px 22px 40% 40%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.05) 100%);
+  background: linear-gradient(180deg, var(--dock-sheen) 0%, transparent 100%);
   pointer-events: none;
   z-index: 1;
 }
