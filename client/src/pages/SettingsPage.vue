@@ -49,7 +49,7 @@ const theme = useTheme();
 
 function switchLang(code: string) { locale.value = code; localStorage.setItem('language', code); }
 
-const notifSettings = reactive({
+const notifSettings = reactive<Record<string, boolean>>({
   medicine: JSON.parse(localStorage.getItem('notif_medicine') || 'true'),
   appointment: JSON.parse(localStorage.getItem('notif_appointment') || 'true'),
   revisit: JSON.parse(localStorage.getItem('notif_revisit') || 'true'),

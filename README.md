@@ -121,6 +121,62 @@ medprescription/
 | Reports | `/api/reports/*` — upload, list |
 | Reminders | `/api/reminders/*` — CRUD + push subscribe |
 
+## 🖥️ VPS Deployment
+
+### Prerequisites on your VPS
+- Node.js 18+, PostgreSQL 14+, Nginx, PM2 (`npm i -g pm2`)
+
+### 1. Clone + configure
+
+```bash
+git clone <your-repo-url> medprescription
+cd medprescription
+cp .env.example .env
+# Edit .env — set JWT_SECRET (openssl rand -hex 32), DATABASE_URL with real credentials
+```
+
+### 2. One-command deploy
+
+```bash
+bash deploy/deploy.sh
+```
+
+This installs deps, builds backend + frontend, runs migrations, copies the frontend to `/var/www/medprescription`.
+
+### 3. Nginx
+
+```bash
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/medprescription
+# Edit the domain name inside the config
+sudo ln -s /etc/nginx/sites-available/medprescription /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+**Important:** The Nginx config proxies `/socket.io/` with WebSocket upgrade headers — required for real-time chat and video call signaling to work.
+
+### 4. Start backend
+
+```bash
+cd server
+pm2 start ../ecosystem.config.js --env production
+pm2 save && pm2 startup
+```
+
+### 5. HTTPS (optional but recommended)
+
+```bash
+sudo certbot --nginx -d yourdomain.com
+```
+
+### Deployment files
+
+| File | Purpose |
+|------|---------|
+| `.env.example` | All environment variables documented |
+| `deploy/deploy.sh` | One-command build + deploy |
+| `deploy/nginx.conf` | Static files + API + WebSocket proxy |
+| `ecosystem.config.js` | PM2 process management |
+
 ## 📜 License
 
 © 2026 MedPrescription. All rights reserved.

@@ -20,7 +20,8 @@ import { initSocket } from './socket.js';
 
 const app = express();
 
-app.use(cors());
+const corsOrigins = config.CORS_ORIGIN === '*' ? true : config.CORS_ORIGIN.split(',').map(o => o.trim());
+app.use(cors({ origin: corsOrigins }));
 app.use(express.json());
 
 // Serve uploaded files statically

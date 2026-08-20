@@ -62,12 +62,12 @@ import { computed } from 'vue';
 import BottomNav from './BottomNav.vue';
 import { useAuthStore } from '../stores/auth';
 import { useTheme } from '../composables/useTheme';
-import { useI18n } from 'vue-i18n';
-import { Home, Stethoscope, ShoppingCart, ClipboardList, Calendar, Upload, LayoutDashboard, AlarmClock, Pill, Sun, Moon, User } from 'lucide-vue-next';
+
+import { Home, Stethoscope, ShoppingCart, ClipboardList, Calendar, Upload, LayoutDashboard, AlarmClock, Pill, Sun, Moon } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const theme = useTheme();
-const { t } = useI18n();
+
 
 const greeting = computed(() => {
   const h = new Date().getHours();

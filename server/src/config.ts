@@ -1,7 +1,11 @@
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { config as dotenv } from 'dotenv';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Load .env from project root (one level above server/)
+dotenv({ path: resolve(__dirname, '../../.env') });
 
 export const config = {
   PORT: parseInt(process.env.PORT || '3000', 10),
@@ -9,4 +13,5 @@ export const config = {
   DATABASE_URL: process.env.DATABASE_URL || 'postgresql://localhost:5432/medprescription',
   UPLOAD_DIR: process.env.UPLOAD_DIR || resolve(__dirname, '../../uploads'),
   OTP_MOCK: process.env.OTP_MOCK !== 'false', // true in dev
+  CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
 };

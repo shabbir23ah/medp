@@ -140,6 +140,10 @@ const reviewDone = ref(false);
 
 const today = new Date().toISOString().slice(0, 10);
 
+function fmtDate(d: string) {
+  return new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 const parsedHours = computed(() => {
   try {
     const h = doctor.value?.available_hours;

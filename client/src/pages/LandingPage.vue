@@ -68,7 +68,7 @@
                   <div class="app-avatar">👤</div>
                   <div class="app-title">My Prescriptions</div>
                 </div>
-                <div class="app-card" v-for="(card, i) in demoCards" :key="i" :style="{ animationDelay: i * 0.2 + 's' }">
+                <div class="app-card" v-for="i in 3" :key="i" :style="{ animationDelay: i * 0.2 + 's' }">
                   <div class="card-thumb" :class="'grad-' + (i + 1)"></div>
                   <div class="card-info">
                     <div class="card-line"></div>
@@ -278,7 +278,7 @@ const statsItems = computed(() => [
   { icon: '🔒', value: 'AES', label: t('landing.statEncryption') },
 ]);
 
-const demoCards = Array.from({ length: 3 }, (_, i) => i);
+
 
 const features = computed(() => [
   { icon: '📸', title: t('landing.feat1Title'), desc: t('landing.feat1Desc') },

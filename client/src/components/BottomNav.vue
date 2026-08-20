@@ -18,12 +18,12 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
-import { useI18n } from 'vue-i18n';
+
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { Home, Stethoscope, ShoppingCart, Calendar, ClipboardList, User, LayoutDashboard, AlarmClock, Pill } from 'lucide-vue-next';
 
-const { t } = useI18n();
+
 const auth = useAuthStore();
 const route = useRoute();
 

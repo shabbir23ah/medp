@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import PrescriptionCard from '../components/PrescriptionCard.vue';
 import { useAuthStore } from '../stores/auth';
