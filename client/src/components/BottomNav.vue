@@ -17,13 +17,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { Home, Stethoscope, ShoppingCart, Calendar, ClipboardList, User, LayoutDashboard, AlarmClock, Pill } from 'lucide-vue-next';
 
 const { t } = useI18n();
 const auth = useAuthStore();
+const route = useRoute();
 
 const isHidden = ref(false);
 const isCompact = ref(false);
@@ -31,6 +33,20 @@ let lastScrollY = window.scrollY;
 let ticking = false;
 let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 let showTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function resetNavState() {
+  // On navigation: instantly show the nav and resync scroll anchor
+  if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null; }
+  if (showTimeout) { clearTimeout(showTimeout); showTimeout = null; }
+  isHidden.value = false;
+  isCompact.value = false;
+  lastScrollY = window.scrollY;
+}
+
+// Reset when navigating to a new page (prevents flicker from stale scroll state)
+watch(() => route.path, () => {
+  resetNavState();
+});
 
 function onScroll() {
   if (ticking) return;
