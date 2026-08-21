@@ -5,6 +5,13 @@
       <p>{{ today }}</p>
     </div>
 
+    <!-- Load error -->
+    <div v-if="loadError" class="error-card">
+      <p>Couldn't load your dashboard.</p>
+      <button @click="load" class="retry-btn">Try again</button>
+    </div>
+
+    <template v-else>
     <!-- Quick Stats -->
     <div class="stats-row">
       <div class="stat-card" @click="$router.push('/timeline')">
@@ -68,6 +75,7 @@
       </div>
       <PrescriptionCard v-for="p in recentRx.slice(0, 3)" :key="p.id" :prescription="p" />
     </div>
+    </template>
   </AppLayout>
 </template>
 
@@ -85,10 +93,14 @@ const api = useApi();
 const stats = ref({ prescriptions: 0, appointments: 0, reminders: 0 });
 const recentRx = ref<any[]>([]);
 const upcomingReminders = ref<any[]>([]);
+const loading = ref(true);
+const loadError = ref(false);
 
 const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
 
-onMounted(async () => {
+async function load() {
+  loading.value = true;
+  loadError.value = false;
   try {
     const [rxRes, aptRes, remRes] = await Promise.all([
       api.get('/prescriptions?limit=5'),
@@ -107,8 +119,14 @@ onMounted(async () => {
       stats.value.reminders = rems.length;
       upcomingReminders.value = rems.filter((r: any) => r.enabled).slice(0, 4);
     }
-  } catch {}
-});
+  } catch {
+    loadError.value = true;
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(load);
 
 function fmtDate(d: string) {
   return new Date(d).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -159,6 +177,24 @@ function fmtDate(d: string) {
 .empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
 .cta-link { color: var(--primary); font-weight: 600; font-size: 13px; }
 h3 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; }
+
+.error-card {
+  text-align: center;
+  padding: 32px 20px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+.error-card p { color: var(--danger); font-weight: 600; margin-bottom: 12px; }
+.retry-btn {
+  padding: 10px 24px;
+  background: var(--danger);
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+}
 
 /* Mobile: consistent card sizing */
 @media (max-width: 480px) {

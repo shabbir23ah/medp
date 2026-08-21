@@ -5,6 +5,13 @@
       <p>{{ today }}</p>
     </div>
 
+    <!-- Load error -->
+    <div v-if="loadError" class="error-card">
+      <p>Couldn't load your schedule.</p>
+      <button @click="load" class="retry-btn">Try again</button>
+    </div>
+
+    <template v-else>
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-num">{{ stats.today }}</span>
@@ -92,6 +99,7 @@
         <span class="badge sm" :class="a.status">{{ a.status }}</span>
       </div>
     </div>
+    </template>
   </AppLayout>
 </template>
 
@@ -107,6 +115,7 @@ const api = useApi();
 
 const allAppts = ref<any[]>([]);
 const stats = ref({ today: 0, pending: 0, total: 0 });
+const loadError = ref(false);
 const rxDrug = ref('');
 const rxDrugs = ref<string[]>([]);
 const interactions = ref<any[]>([]);
@@ -142,15 +151,22 @@ const todayAppts = computed(() =>
   allAppts.value.filter(a => a.scheduled_at.startsWith(todayStr) && a.status !== 'cancelled')
 );
 
-onMounted(async () => {
-  const { data } = await api.get('/appointments');
-  if (data.ok) {
-    allAppts.value = data.data;
-    stats.value.today = todayAppts.value.length;
-    stats.value.pending = data.data.filter((a: any) => a.status === 'pending').length;
-    stats.value.total = data.data.length;
+async function load() {
+  loadError.value = false;
+  try {
+    const { data } = await api.get('/appointments');
+    if (data.ok) {
+      allAppts.value = data.data;
+      stats.value.today = todayAppts.value.length;
+      stats.value.pending = data.data.filter((a: any) => a.status === 'pending').length;
+      stats.value.total = data.data.length;
+    }
+  } catch {
+    loadError.value = true;
   }
-});
+}
+
+onMounted(load);
 
 async function update(id: string, status: string) {
   await api.put(`/appointments/${id}`, { status });
@@ -222,6 +238,24 @@ function fmtShort(d: string) {
   border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none;
 }
 .empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
+
+.error-card {
+  text-align: center;
+  padding: 32px 20px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+.error-card p { color: var(--danger); font-weight: 600; margin-bottom: 12px; }
+.retry-btn {
+  padding: 10px 24px;
+  background: var(--danger);
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+}
 .rx-builder { display: flex; flex-direction: column; gap: 10px; }
 .rx-meds-input { display: flex; gap: 8px; }
 .rx-meds-input input {

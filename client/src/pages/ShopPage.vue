@@ -10,7 +10,7 @@
 
     <!-- Cart Panel -->
     <div v-if="showCart && cart.length > 0" class="cart-panel">
-      <h3>Your Cart</h3>
+      <h3>Your Cart <span class="cart-pharmacy">· {{ cart[0].pharmacyName }}</span></h3>
       <div v-for="(item, i) in cart" :key="i" class="cart-item">
         <div>
           <strong>{{ item.name }}</strong>
@@ -105,9 +105,11 @@
 import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
+import { useToast } from '../composables/useToast';
 import { ShoppingCart, ClipboardList, Search, Store } from 'lucide-vue-next';
 
 const api = useApi();
+const toast = useToast();
 const medicines = ref<any[]>([]);
 const orders = ref<any[]>([]);
 const loading = ref(true);
@@ -146,10 +148,19 @@ const justAdded = ref<Record<string, boolean>>({});
 const addedTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 function addToCart(med: any) {
+  // Orders are placed per-pharmacy — block mixing to prevent silent misrouting
   const existing = cart.value.find(i => i.id === med.id);
+  if (!existing && cart.value.length > 0 && cart.value[0].pharmacyId !== med.pharmacy_id) {
+    toast.error(`Cart has items from ${cart.value[0].pharmacyName} — checkout or clear it first`);
+    return;
+  }
+
   if (existing) { existing.quantity++; }
   else {
-    cart.value.push({ id: med.id, name: med.name, price: med.price, quantity: 1, pharmacyId: med.pharmacy_id });
+    cart.value.push({
+      id: med.id, name: med.name, price: med.price, quantity: 1,
+      pharmacyId: med.pharmacy_id, pharmacyName: med.pharmacy_name,
+    });
   }
 
   // Visual confirmation on the button ("✓ Added" for ~1.2s)
@@ -222,6 +233,7 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString(); }
   padding: 16px; margin-bottom: 16px;
 }
 .cart-panel h3 { margin-bottom: 10px; }
+.cart-pharmacy { font-size: 12px; font-weight: 600; color: var(--text-muted); }
 .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
 .cart-item strong { display: block; font-size: 14px; }
 .cart-item span { font-size: 12px; color: var(--text-muted); }

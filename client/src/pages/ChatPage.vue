@@ -1,43 +1,57 @@
 <template>
   <AppLayout title="Chat">
-    <!-- Call banner -->
-    <div v-if="inCall || incomingCall" class="call-banner" :class="{ ringing: incomingCall }">
-      <span>{{ incomingCall ? 'Incoming call...' : 'Call in progress' }}</span>
-      <div class="call-actions">
-        <button v-if="incomingCall" @click="acceptCall" class="btn-accept">Accept</button>
-        <button @click="endCall" class="btn-end">End</button>
-      </div>
-    </div>
-
     <!-- Video -->
-    <div v-if="inCall" class="video-container">
-      <video ref="remoteVideo" autoplay playsinline class="remote-video"></video>
-      <video ref="localVideo" autoplay playsinline muted class="local-video"></video>
+    <div v-if="call.inCall.value" class="video-container">
+      <video :ref="call.setRemoteVideoEl" autoplay playsinline class="remote-video"></video>
+      <video :ref="call.setLocalVideoEl" autoplay playsinline muted class="local-video"></video>
       <div class="call-controls">
-        <button @click="toggleVideo" class="ctrl-btn"><Video :size="16" :stroke-width="2" :class="{ off: !videoOn }" /></button>
-        <button @click="toggleAudio" class="ctrl-btn"><Mic :size="16" :stroke-width="2" :class="{ off: !audioOn }" /></button>
-        <button @click="endCall" class="ctrl-btn end"><PhoneOff :size="16" :stroke-width="2" /></button>
+        <button @click="call.toggleVideo()" class="ctrl-btn" aria-label="Toggle video">
+          <Video :size="16" :stroke-width="2" :class="{ off: !call.videoOn.value }" />
+        </button>
+        <button @click="call.toggleAudio()" class="ctrl-btn" aria-label="Toggle audio">
+          <Mic :size="16" :stroke-width="2" :class="{ off: !call.audioOn.value }" />
+        </button>
+        <button @click="call.endCall()" class="ctrl-btn end" aria-label="End call">
+          <PhoneOff :size="16" :stroke-width="2" />
+        </button>
       </div>
     </div>
 
     <!-- Messages -->
     <div class="chat-box" ref="chatBox">
       <div v-for="m in messages" :key="m.id" :class="['msg', m.sender_id === userId ? 'me' : 'them']">
-        <div v-if="m.type === 'call_started'" class="call-msg"><Phone :size="12" :stroke-width="2" /> Call started</div>
-        <div v-else-if="m.type === 'call_ended'" class="call-msg"><PhoneOff :size="12" :stroke-width="2" /> Call ended</div>
-        <div v-else-if="m.type === 'prescription'" class="rx-msg">
+        <div v-if="m.type === 'prescription'" class="rx-msg">
           <Pill :size="14" :stroke-width="2" /> <strong>Prescription shared</strong>
           <p>{{ m.content }}</p>
         </div>
         <div v-else class="bubble">{{ m.content }}</div>
-        <div class="time" v-if="m.type === 'text'">{{ formatTime(m.created_at) }}</div>
+        <div class="time" v-if="m.type === 'text'">
+          {{ formatTime(m.created_at) }}
+          <span
+            v-if="m.sender_id === userId"
+            class="status"
+            :class="{ pending: m.status === 'pending' }"
+            :aria-label="m.status === 'pending' ? 'Sending' : 'Sent'"
+          >{{ m.status === 'pending' ? '⏳' : '✓' }}</span>
+        </div>
       </div>
       <div v-if="messages.length === 0" class="center">No messages yet</div>
     </div>
 
+    <!-- Typing indicator -->
+    <div v-if="peerTyping" class="typing" aria-live="polite">
+      <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span> typing…
+    </div>
+
     <div class="input-row">
-      <button @click="startCall" class="call-btn" title="Start call"><Phone :size="16" :stroke-width="2" /></button>
-      <input v-model="text" @keyup.enter="sendText" placeholder="Type a message..." class="chat-input" />
+      <button @click="startCall" class="call-btn" aria-label="Start video call"><Phone :size="16" :stroke-width="2" /></button>
+      <input
+        v-model="text"
+        @keyup.enter="sendText"
+        @input="onTypingInput"
+        placeholder="Type a message..."
+        class="chat-input"
+      />
       <button @click="sendText" class="send-btn">Send</button>
     </div>
   </AppLayout>
@@ -46,32 +60,28 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { io, Socket } from 'socket.io-client';
 import { Phone, PhoneOff, Video, Mic, Pill } from 'lucide-vue-next';
 import AppLayout from '../components/AppLayout.vue';
+import { getSocket } from '../composables/useSocket';
+import { useCall } from '../composables/useCall';
 import { useApi } from '../composables/useApi';
 import { useAuthStore } from '../stores/auth';
 
 const route = useRoute();
 const api = useApi();
 const auth = useAuthStore();
+const call = useCall();
 
 const appointmentId = route.params.appointmentId as string;
 const userId = auth.user?.id || '';
 const messages = ref<any[]>([]);
 const text = ref('');
 const chatBox = ref<HTMLElement>();
+const peerTyping = ref(false);
 
-let socket: Socket;
-let pc: RTCPeerConnection | null = null;
-let localStream: MediaStream | null = null;
-
-const inCall = ref(false);
-const incomingCall = ref(false);
-const videoOn = ref(true);
-const audioOn = ref(true);
-const localVideo = ref<HTMLVideoElement>();
-const remoteVideo = ref<HTMLVideoElement>();
+let receiverId = '';
+let peerTypingTimer: ReturnType<typeof setTimeout> | null = null;
+let lastTypingSent = 0;
 
 function formatTime(ts: string) {
   return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -92,189 +102,114 @@ async function loadHistory() {
   } catch {}
 }
 
-// Connect socket
-function connectSocket() {
-  socket = io(window.location.origin);
-
-  socket.emit('chat:join', appointmentId);
-
-  socket.on('chat:message', (msg: any) => {
-    messages.value.push(msg);
-    scrollBottom();
-  });
-
-  // WebRTC signaling
-  socket.on('call:offer', async (data: { offer: RTCSessionDescriptionInit; callerId: string }) => {
-    incomingCall.value = true;
-    // Store offer for accept
-    (window as any).__pendingOffer = data.offer;
-  });
-
-  socket.on('call:answer', async (answer: RTCSessionDescriptionInit) => {
-    if (pc) await pc.setRemoteDescription(new RTCSessionDescription(answer));
-  });
-
-  socket.on('call:ice-candidate', async (candidate: RTCIceCandidateInit) => {
-    if (pc) await pc.addIceCandidate(new RTCIceCandidate(candidate));
-  });
-
-  socket.on('call:end', () => {
-    hangup();
-  });
-}
-
-// WebRTC
-async function getMedia() {
-  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  if (localVideo.value) localVideo.value.srcObject = localStream;
-}
-
-async function createPeerConnection() {
-  pc = new RTCPeerConnection({
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-  });
-
-  pc.onicecandidate = (e) => {
-    if (e.candidate) {
-      socket.emit('call:ice-candidate', { appointmentId, candidate: e.candidate });
-    }
-  };
-
-  pc.ontrack = (e) => {
-    if (remoteVideo.value && e.streams[0]) {
-      remoteVideo.value.srcObject = e.streams[0];
-    }
-  };
-
-  if (localStream) {
-    localStream.getTracks().forEach((track) => pc!.addTrack(track, localStream!));
-  }
-}
-
-async function startCall() {
-  try {
-    await getMedia();
-    await createPeerConnection();
-
-    const offer = await pc!.createOffer();
-    await pc!.setLocalDescription(offer);
-
-    socket.emit('call:offer', { appointmentId, offer, callerId: userId });
-    inCall.value = true;
-
-    messages.value.push({
-      id: Date.now().toString(),
-      sender_id: userId,
-      type: 'call_started',
-      content: 'Call started',
-      created_at: new Date().toISOString(),
-    });
-    scrollBottom();
-  } catch (e) {
-    console.error('Call start failed:', e);
-    alert('Could not start call. Check camera/microphone permissions.');
-  }
-}
-
-async function acceptCall() {
-  incomingCall.value = false;
-  try {
-    await getMedia();
-    await createPeerConnection();
-
-    const offer = (window as any).__pendingOffer;
-    if (offer && pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      socket.emit('call:answer', { appointmentId, answer });
-    }
-    inCall.value = true;
-  } catch (e) {
-    console.error('Accept call failed:', e);
-  }
-}
-
-function endCall() {
-  socket.emit('call:end', { appointmentId });
-  hangup();
-}
-
-function hangup() {
-  if (pc) {
-    pc.close();
-    pc = null;
-  }
-  if (localStream) {
-    localStream.getTracks().forEach((t) => t.stop());
-    localStream = null;
-  }
-  inCall.value = false;
-  incomingCall.value = false;
-  if (localVideo.value) localVideo.value.srcObject = null;
-  if (remoteVideo.value) remoteVideo.value.srcObject = null;
-
-  messages.value.push({
-    id: Date.now().toString(),
-    sender_id: userId,
-    type: 'call_ended',
-    content: 'Call ended',
-    created_at: new Date().toISOString(),
-  });
-  scrollBottom();
-}
-
-function toggleVideo() {
-  videoOn.value = !videoOn.value;
-  if (localStream) {
-    localStream.getVideoTracks().forEach((t) => (t.enabled = videoOn.value));
-  }
-}
-
-function toggleAudio() {
-  audioOn.value = !audioOn.value;
-  if (localStream) {
-    localStream.getAudioTracks().forEach((t) => (t.enabled = audioOn.value));
-  }
-}
-
-async function sendText() {
-  if (!text.value.trim()) return;
-  const content = text.value;
-  text.value = '';
-
-  // Get receiverId from appointment
-  let receiverId = '';
+// Resolve the other participant once per session (was previously
+// re-fetched on every single message send)
+async function resolveReceiver() {
+  if (receiverId) return;
   try {
     const { data } = await api.get('/appointments');
     if (data.ok) {
       const apt = data.data.find((a: any) => a.id === appointmentId);
-      if (apt) {
-        receiverId = auth.isDoctor ? apt.patient_id : apt.doctor_id;
-      }
+      if (apt) receiverId = auth.isDoctor ? apt.patient_id : apt.doctor_id;
     }
   } catch {}
+}
 
-  socket.emit('chat:message', {
+// Reconcile server echo with the optimistic message via clientId
+function onMessage(msg: any) {
+  if (msg.clientId) {
+    const idx = messages.value.findIndex((m) => m.id === msg.clientId);
+    if (idx !== -1) {
+      messages.value[idx] = { ...msg, status: 'sent' };
+      scrollBottom();
+      return;
+    }
+  }
+  if (msg.sender_id === userId) {
+    // Own echo without matching clientId — reconcile by content
+    const idx = messages.value.findIndex(
+      (m) => m.status === 'pending' && m.content === msg.content
+    );
+    if (idx !== -1) {
+      messages.value[idx] = { ...msg, status: 'sent' };
+    }
+  } else {
+    messages.value.push({ ...msg, status: 'received' });
+    peerTyping.value = false;
+  }
+  scrollBottom();
+}
+
+function onPeerTyping() {
+  peerTyping.value = true;
+  if (peerTypingTimer) clearTimeout(peerTypingTimer);
+  peerTypingTimer = setTimeout(() => (peerTyping.value = false), 3000);
+}
+
+// Throttled typing broadcast — at most one event every 2s while typing
+function onTypingInput() {
+  const now = Date.now();
+  if (text.value.trim() && now - lastTypingSent > 2000) {
+    lastTypingSent = now;
+    getSocket(userId).emit('chat:typing', { appointmentId });
+  }
+}
+
+// Optimistic send — message appears instantly as ⏳, flips to ✓ on echo
+async function sendText() {
+  const content = text.value.trim();
+  if (!content) return;
+  text.value = '';
+
+  await resolveReceiver();
+
+  const clientId = `tmp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  messages.value.push({
+    id: clientId,
+    sender_id: userId,
+    content,
+    type: 'text',
+    created_at: new Date().toISOString(),
+    status: 'pending',
+  });
+  scrollBottom();
+
+  getSocket(userId).emit('chat:message', {
     appointmentId,
     senderId: userId,
     receiverId,
     content,
     type: 'text',
+    clientId,
   });
 }
 
+async function startCall() {
+  await resolveReceiver();
+  if (receiverId) {
+    call.startCall(appointmentId, receiverId);
+  }
+}
+
 onMounted(async () => {
+  call.bindSignalListeners();
   await loadHistory();
-  connectSocket();
+  await resolveReceiver();
+
+  const socket = getSocket(userId);
+  socket.emit('chat:join', appointmentId);
+  socket.on('chat:message', onMessage);
+  socket.on('chat:typing', onPeerTyping);
 });
 
 onUnmounted(() => {
-  if (socket) {
-    socket.emit('chat:leave', appointmentId);
-    socket.disconnect();
-  }
-  hangup();
+  const socket = getSocket(userId);
+  socket.emit('chat:leave', appointmentId);
+  socket.off('chat:message', onMessage);
+  socket.off('chat:typing', onPeerTyping);
+  if (peerTypingTimer) clearTimeout(peerTypingTimer);
+  // NOTE: shared socket stays connected and active calls are NOT hung up
+  // here — calls continue across navigation (see CallBanner).
 });
 </script>
 
@@ -290,13 +225,31 @@ onUnmounted(() => {
 .bubble {
   padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.4;
 }
-.me .bubble { background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+.me .bubble { background: var(--primary); color: var(--primary-text); border-bottom-right-radius: 4px; }
 .them .bubble { background: var(--border); color: var(--text); border-bottom-left-radius: 4px; }
 .time { font-size: 10px; color: var(--text-muted); margin-top: 2px; padding: 0 4px; }
-.call-msg { text-align: center; font-size: 12px; color: var(--text-muted); padding: 8px; }
-.rx-msg { background: #fef3c7; padding: 12px; border-radius: 10px; margin: 8px 0; }
+.status { margin-left: 3px; }
+.status.pending { opacity: 0.6; }
+.rx-msg { background: var(--warning-bg); padding: 12px; border-radius: 10px; margin: 8px 0; color: var(--text); }
 .rx-msg p { margin-top: 4px; font-size: 13px; }
 .center { text-align: center; padding: 40px; color: var(--text-muted); }
+
+.typing {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--text-muted); padding: 4px 6px;
+}
+.typing-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--text-muted);
+  animation: typing-bounce 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
 .input-row {
   display: flex; gap: 8px; padding: 12px 0; align-items: center;
   position: sticky; bottom: 0; background: var(--bg);
@@ -304,28 +257,20 @@ onUnmounted(() => {
 .chat-input {
   flex: 1; padding: 10px; border: 2px solid var(--border);
   border-radius: 10px; font-size: 14px; outline: none;
+  background: var(--bg); color: var(--text);
 }
 .chat-input:focus { border-color: var(--primary); }
 .send-btn, .call-btn {
-  padding: 10px 16px; background: var(--primary); color: white;
+  padding: 10px 16px; background: var(--primary); color: var(--primary-text);
   border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
 }
 .call-btn { font-size: 18px; padding: 10px 14px; }
-.call-banner {
-  background: #1e293b; color: white; padding: 12px 16px;
-  border-radius: 10px; display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 8px;
-}
-.call-banner.ringing { animation: pulse 1s infinite; background: #0f766e; }
-@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.7; } }
-.call-actions { display: flex; gap: 8px; }
-.btn-accept { padding: 6px 14px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
-.btn-end { padding: 6px 14px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; }
+
 .video-container { position: relative; margin-bottom: 8px; }
 .remote-video { width: 100%; border-radius: 10px; background: #000; }
 .local-video { position: absolute; bottom: 8px; right: 8px; width: 100px; border-radius: 8px; border: 2px solid white; }
 .call-controls { display: flex; gap: 8px; justify-content: center; padding: 8px; }
 .ctrl-btn { width: 44px; height: 44px; border-radius: 50%; background: #334155; color: white; border: none; font-size: 16px; cursor: pointer; }
-.ctrl-btn.end { background: #ef4444; }
+.ctrl-btn.end { background: var(--danger); }
 .ctrl-btn svg.off { opacity: 0.4; }
 </style>

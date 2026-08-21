@@ -48,6 +48,7 @@
       </header>
 
       <main class="main-content">
+        <CallBanner />
         <slot />
       </main>
     </div>
@@ -58,15 +59,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import BottomNav from './BottomNav.vue';
+import CallBanner from './CallBanner.vue';
 import { useAuthStore } from '../stores/auth';
 import { useTheme } from '../composables/useTheme';
+import { useCall } from '../composables/useCall';
 
 import { Home, Stethoscope, ShoppingCart, ClipboardList, Calendar, Upload, LayoutDashboard, AlarmClock, Pill, Sun, Moon } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const theme = useTheme();
+const call = useCall();
+
+// Listen for incoming calls on the shared socket for as long as the
+// authenticated shell is mounted
+onMounted(() => {
+  if (auth.isAuthenticated) call.bindSignalListeners();
+});
 
 
 const greeting = computed(() => {

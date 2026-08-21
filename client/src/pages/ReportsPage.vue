@@ -21,6 +21,7 @@
       v-for="r in store.reports"
       :key="r.id"
       :report="r"
+      :confirming="confirmingId === r.id"
       @view="viewReport"
       @delete="handleDelete"
     />
@@ -33,8 +34,11 @@ import AppLayout from '../components/AppLayout.vue';
 import FileUpload from '../components/FileUpload.vue';
 import ReportCard from '../components/ReportCard.vue';
 import { useReportsStore, type Report } from '../stores/reports';
+import { useToast } from '../composables/useToast';
 
 const store = useReportsStore();
+const toast = useToast();
+const confirmingId = ref<string | null>(null);
 onMounted(() => store.fetchReports());
 
 const image = ref<File | null>(null);
@@ -68,7 +72,19 @@ function viewReport(report: Report) {
 }
 
 async function handleDelete(id: string) {
-  if (confirm('Delete this report?')) await store.deleteReport(id);
+  // Two-tap confirmation — first tap arms, second tap within 3s deletes
+  if (confirmingId.value === id) {
+    confirmingId.value = null;
+    try {
+      await store.deleteReport(id);
+      toast.success('Report deleted');
+    } catch {
+      toast.error('Failed to delete report');
+    }
+    return;
+  }
+  confirmingId.value = id;
+  setTimeout(() => { if (confirmingId.value === id) confirmingId.value = null; }, 3000);
 }
 </script>
 

@@ -4,10 +4,12 @@
       <component :is="Component" :key="route.path" />
     </transition>
   </router-view>
+  <ToastHost />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import ToastHost from './components/ToastHost.vue';
 import { useAuthStore } from './stores/auth';
 
 const auth = useAuthStore();

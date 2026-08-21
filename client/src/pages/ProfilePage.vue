@@ -50,8 +50,10 @@ import { ref, reactive } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useAuthStore } from '../stores/auth';
 import { useApi } from '../composables/useApi';
+import { useToast } from '../composables/useToast';
 import { Camera } from 'lucide-vue-next';
 const auth = useAuthStore();
+const toast = useToast();
 const api = useApi();
 const form = reactive({ name: auth.user?.name || '', email: auth.user?.email || '', nid: auth.user?.nid || '', dob: auth.user?.dob || '' });
 const saving = ref(false);
@@ -81,7 +83,7 @@ async function handleSave() {
     }
   } catch (e: any) {
     success.value = false;
-    alert(e.response?.data?.error || 'Failed to save');
+    toast.error(e.response?.data?.error || 'Failed to save profile');
   }
   finally { saving.value = false; }
 }
