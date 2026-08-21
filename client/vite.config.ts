@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon-192x192.png', 'icons/icon-512x512.png'],
       manifest: {
-        name: 'MedPrescription',
-        short_name: 'MedRx',
+        name: 'Wellness',
+        short_name: 'Wellness',
         description: 'Your prescriptions, always with you',
         theme_color: '#0891b2',
         background_color: '#ffffff',
@@ -37,7 +37,7 @@ export default defineConfig({
     }),
   ],
   server: {
-    allowedHosts: ['.ngrok-free.dev', 'localhost'],
+    allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev', 'localhost'],
     proxy: {
       '/api': 'http://localhost:3000',
       '/uploads': 'http://localhost:3000',

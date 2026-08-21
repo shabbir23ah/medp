@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "MedPrescription",
+    "name": "Wellness",
     "tagline": "Your prescriptions, always with you"
   },
   "nav": {
@@ -19,6 +19,10 @@
     "otpLabel": "Enter OTP",
     "otpPlaceholder": "123456",
     "verify": "Verify",
+    "resend": "Resend OTP",
+    "resendIn": "Resend OTP in {s}s",
+    "changeNumber": "Wrong number? Change it",
+    "otpResent": "A new OTP has been sent",
     "invalidOtp": "Invalid or expired code",
     "logout": "Logout"
   },
@@ -129,7 +133,7 @@
     "feat4Title": "Quick Search",
     "feat4Desc": "Search by doctor name, hospital, diagnosis, or medicine. Your entire history at your fingertips.",
     "feat5Title": "4 Languages",
-    "feat5Desc": "Use MedPrescription in English, Bengali, Spanish, or French. Switch anytime from settings.",
+    "feat5Desc": "Use Wellness in English, Bengali, Spanish, or French. Switch anytime from settings.",
     "feat6Title": "Privacy First",
     "feat6Desc": "Your data is encrypted and private. Login with just your phone number — no passwords to remember.",
     "howTag": "How It Works",
@@ -150,11 +154,11 @@
     "demoItem3": "Search by any keyword",
     "demoItem4": "Reminders that actually work",
     "ctaTitle": "Ready to take control of your health?",
-    "ctaSub": "Join thousands of people who trust MedPrescription to keep their medical records organized, accessible, and secure.",
+    "ctaSub": "Join thousands of people who trust Wellness to keep their medical records organized, accessible, and secure.",
     "ctaButton": "Get Started — It's Free Forever",
     "footerDesc": "Your personal health companion. Store prescriptions, track medicines, and never miss an appointment.",
     "footerProduct": "Product",
     "footerSupport": "Support",
-    "footer": "© 2026 MedPrescription. Made with ❤️ for your health."
+    "footer": "© 2026 Wellness. Made with ❤️ for your health."
   }
 }

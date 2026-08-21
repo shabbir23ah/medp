@@ -1,6 +1,6 @@
 // Service worker for push notifications
 self.addEventListener('push', (event) => {
-  const data = event.data?.json() || { title: 'MedPrescription', body: 'You have a reminder' };
+  const data = event.data?.json() || { title: 'Wellness', body: 'You have a reminder' };
 
   const options = {
     body: data.body,

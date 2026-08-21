@@ -4,7 +4,7 @@
     <aside class="sidebar">
       <div class="sidebar-brand" @click="$router.push('/timeline')">
         <Pill class="brand-icon" :size="24" :stroke-width="2.2" />
-        <span class="brand-name">MedPrescription</span>
+        <span class="brand-name">Wellness</span>
       </div>
       <nav class="sidebar-nav">
         <router-link

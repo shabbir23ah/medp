@@ -7,7 +7,7 @@
   --surface-hover: #F8FAFC;
   --text: #0F172A;
   --text-secondary: #475569;
-  --text-muted: #94A3B8;
+  --text-muted: #64748B;
   --border: #E2E8F0;
   --border-light: #F1F5F9;
   --primary: #0D9488;
@@ -45,8 +45,8 @@
   --surface: #1A2332;
   --surface-hover: #1F2A3A;
   --text: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
   --border: #1E293B;
   --border-light: #1A2332;
   --primary: #14B8A6;
@@ -105,6 +105,13 @@ button {
   color: inherit;
 }
 
+/* Keyboard focus ring — visible for all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 input, textarea, select {
   font-family: inherit;
   font-size: 16px;
@@ -141,3 +148,15 @@ a { color: var(--primary); text-decoration: none; }
 /* Utility */
 .radius { border-radius: 16px; }
 .radius-sm { border-radius: 12px; }
+
+/* Respect users who opt out of motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

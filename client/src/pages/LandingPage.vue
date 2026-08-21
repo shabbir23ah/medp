@@ -11,7 +11,7 @@
       <div class="nav-inner">
         <div class="brand">
           <span class="brand-icon">💊</span>
-          <span class="brand-text">MedPrescription</span>
+          <span class="brand-text">Wellness</span>
         </div>
         <div class="nav-actions">
           <button class="btn-lang" @click="cycleLang">
@@ -201,7 +201,7 @@
       <div class="footer-inner">
         <div class="footer-grid">
           <div class="footer-col brand-col">
-            <div class="footer-logo">💊 MedPrescription</div>
+            <div class="footer-logo">💊 Wellness</div>
             <p>{{ $t('landing.footerDesc') }}</p>
           </div>
           <div class="footer-col">
@@ -369,26 +369,28 @@ const demoItems = computed(() => [
 .bg-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.15;
+  /* No filter: blur() here — radial gradients already fade softly, and
+     animating an 80px blur forces huge re-rasterizations while scrolling */
+  opacity: 0.22;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
 .orb-1 {
   width: 600px; height: 600px;
-  background: radial-gradient(circle, var(--c-accent), transparent);
+  background: radial-gradient(circle, var(--c-accent) 0%, transparent 65%);
   top: -200px; left: -200px;
   animation: float1 20s ease-in-out infinite;
 }
 .orb-2 {
   width: 500px; height: 500px;
-  background: radial-gradient(circle, var(--c-purple), transparent);
+  background: radial-gradient(circle, var(--c-purple) 0%, transparent 65%);
   bottom: -150px; right: -150px;
   animation: float2 25s ease-in-out infinite;
 }
 .orb-3 {
   width: 400px; height: 400px;
-  background: radial-gradient(circle, var(--c-green), transparent);
+  background: radial-gradient(circle, var(--c-green) 0%, transparent 70%);
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   animation: pulse 8s ease-in-out infinite;
@@ -401,13 +403,19 @@ const demoItems = computed(() => [
   background-size: 60px 60px;
   pointer-events: none;
   z-index: 0;
+  /* Rasterize once into its own layer instead of repainting on scroll */
+  transform: translateZ(0);
 }
 
 /* Nav */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 4px 0;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Scoped transition — never transition `all`/padding here: the scroll
+     toggle would trigger layout on every threshold crossing */
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s ease,
+              backdrop-filter 0.4s ease;
 }
 .nav.scrolled {
   background: rgba(255,255,255,0.82);
@@ -471,6 +479,7 @@ const demoItems = computed(() => [
 .shape {
   position: absolute; border-radius: 50%;
   opacity: 0.08;
+  will-change: transform;
 }
 .shape-1 {
   width: 300px; height: 300px; background: var(--c-primary);
@@ -577,6 +586,7 @@ const demoItems = computed(() => [
 .floating-phone { 
   position: relative;
   animation: phoneFloat 6s ease-in-out infinite;
+  will-change: transform;
 }
 @keyframes phoneFloat {
   0%, 100% { transform: translateY(0px); }
@@ -657,6 +667,7 @@ const demoItems = computed(() => [
   display: flex; align-items: center; gap: 6px;
   background: var(--c-surface);
   pointer-events: none;
+  will-change: transform, opacity;
 }
 .badge-reminder {
   top: 50px; right: -90px;

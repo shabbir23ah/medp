@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "MedPrescription",
+    "name": "Wellness",
     "tagline": "Sus recetas, siempre con usted"
   },
   "nav": {
@@ -19,6 +19,10 @@
     "otpLabel": "Ingrese OTP",
     "otpPlaceholder": "123456",
     "verify": "Verificar",
+    "resend": "Reenviar OTP",
+    "resendIn": "Reenviar OTP en {s}s",
+    "changeNumber": "¿Número equivocado? Cámbialo",
+    "otpResent": "Se ha enviado un nuevo OTP",
     "invalidOtp": "Código inválido o expirado",
     "logout": "Cerrar Sesión"
   },
@@ -129,7 +133,7 @@
     "feat4Title": "Búsqueda Rápida",
     "feat4Desc": "Busca por doctor, hospital, diagnóstico o medicina. Todo tu historial al alcance de tu mano.",
     "feat5Title": "4 Idiomas",
-    "feat5Desc": "Usa MedPrescription en inglés, bengalí, español o francés. Cambia cuando quieras desde ajustes.",
+    "feat5Desc": "Usa Wellness en inglés, bengalí, español o francés. Cambia cuando quieras desde ajustes.",
     "feat6Title": "Privacidad Primero",
     "feat6Desc": "Tus datos están cifrados y son privados. Inicia sesión solo con tu número de teléfono — sin contraseñas.",
     "howTag": "Cómo Funciona",
@@ -150,11 +154,11 @@
     "demoItem3": "Busca por cualquier palabra",
     "demoItem4": "Recordatorios que funcionan",
     "ctaTitle": "¿Listo para tomar el control de tu salud?",
-    "ctaSub": "Únete a miles de personas que confían en MedPrescription para mantener sus registros médicos organizados, accesibles y seguros.",
+    "ctaSub": "Únete a miles de personas que confían en Wellness para mantener sus registros médicos organizados, accesibles y seguros.",
     "ctaButton": "Comenzar — Es Gratis para Siempre",
     "footerDesc": "Tu compañero personal de salud. Guarda recetas, rastrea medicinas y nunca pierdas una cita.",
     "footerProduct": "Producto",
     "footerSupport": "Soporte",
-    "footer": "© 2026 MedPrescription. Hecho con ❤️ por tu salud."
+    "footer": "© 2026 Wellness. Hecho con ❤️ por tu salud."
   }
 }

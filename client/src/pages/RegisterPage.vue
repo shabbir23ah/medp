@@ -2,7 +2,7 @@
   <div class="register-page">
     <div class="card">
       <h1>Create your account</h1>
-      <p class="sub">Choose how you want to use MedPrescription</p>
+      <p class="sub">Choose how you want to use Wellness</p>
 
       <!-- Step 1: Phone + OTP -->
       <div v-if="step === 1">

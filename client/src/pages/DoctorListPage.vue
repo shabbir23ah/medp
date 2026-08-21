@@ -36,9 +36,6 @@
 
     <!-- List -->
     <router-link v-for="d in filtered" :key="d.id" :to="`/doctors/${d.id}`" class="doc-card">
-      <div class="doc-rank" v-if="d.consultation_fee">
-        <span class="rank-badge"><Star :size="12" :stroke-width="2.5" class="rank-star" /> Top Rated</span>
-      </div>
       <div class="doc-main">
         <div class="doc-avatar">
           {{ (d.name || 'D')[0].toUpperCase() }}
@@ -55,8 +52,7 @@
             <span class="rating-count">({{ d.rating.count }})</span>
           </div>
           <div class="doc-meta">
-            <span class="meta-chip"><Calendar :size="12" :stroke-width="2" /> Available Today</span>
-            <span class="meta-chip fee">৳{{ d.consultation_fee || 0 }}</span>
+            <span class="meta-chip fee" v-if="d.consultation_fee">৳{{ d.consultation_fee }}</span>
           </div>
         </div>
         <span class="doc-arrow">→</span>
@@ -69,7 +65,7 @@
 import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
-import { Search, Star, CheckCircle, Calendar } from 'lucide-vue-next';
+import { Search, CheckCircle } from 'lucide-vue-next';
 
 const api = useApi();
 const doctors = ref<any[]>([]);
@@ -173,11 +169,6 @@ onMounted(fetchDoctors);
   transition: all 0.2s;
 }
 .doc-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-.doc-rank {
-  background: linear-gradient(135deg, var(--primary-bg), rgba(20,184,166,0.05));
-  padding: 8px 20px;
-}
-.rank-badge { font-size: 11px; font-weight: 700; color: var(--primary); }
 .doc-main {
   display: flex;
   align-items: center;

@@ -4,7 +4,7 @@
       <h1><ShoppingCart :size="22" :stroke-width="2" class="inline-icon" /> Medicine Shop</h1>
       <p>Order medicines from trusted pharmacies.</p>
       <button v-if="cart.length > 0" @click="showCart = !showCart" class="cart-badge">
-        <ShoppingCart :size="14" :stroke-width="2" /> {{ cart.length }} item{{ cart.length > 1 ? 's' : '' }} · ৳{{ cartTotal }}
+        <ShoppingCart :size="14" :stroke-width="2" /> <span :key="cart.length" class="cart-count">{{ cart.length }} item{{ cart.length > 1 ? 's' : '' }}</span> · ৳{{ cartTotal }}
       </button>
     </div>
 
@@ -74,7 +74,14 @@
         </div>
         <div class="med-price">
           <strong>৳{{ med.price }}</strong>
-          <button @click="addToCart(med)" class="add-btn">+ Add</button>
+          <button
+            @click="addToCart(med)"
+            class="add-btn"
+            :class="{ added: justAdded[med.id] }"
+            :aria-live="justAdded[med.id] ? 'polite' : undefined"
+          >
+            {{ justAdded[med.id] ? '✓ Added' : '+ Add' }}
+          </button>
         </div>
       </div>
     </div>
@@ -135,10 +142,26 @@ onMounted(async () => {
   } finally { loading.value = false; }
 });
 
+const justAdded = ref<Record<string, boolean>>({});
+const addedTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
 function addToCart(med: any) {
   const existing = cart.value.find(i => i.id === med.id);
-  if (existing) { existing.quantity++; return; }
-  cart.value.push({ id: med.id, name: med.name, price: med.price, quantity: 1, pharmacyId: med.pharmacy_id });
+  if (existing) { existing.quantity++; }
+  else {
+    cart.value.push({ id: med.id, name: med.name, price: med.price, quantity: 1, pharmacyId: med.pharmacy_id });
+  }
+
+  // Visual confirmation on the button ("✓ Added" for ~1.2s)
+  justAdded.value = { ...justAdded.value, [med.id]: true };
+  const prev = addedTimers.get(med.id);
+  if (prev) clearTimeout(prev);
+  addedTimers.set(med.id, setTimeout(() => {
+    const copy = { ...justAdded.value };
+    delete copy[med.id];
+    justAdded.value = copy;
+    addedTimers.delete(med.id);
+  }, 1200));
 }
 
 function removeFromCart(i: number) { cart.value.splice(i, 1); }
@@ -229,7 +252,28 @@ function fmtDate(d: string) { return new Date(d).toLocaleDateString(); }
 .rx-badge { font-size: 10px; color: var(--warning); font-weight: 600; display: block; margin-top: 2px; }
 .med-price { text-align: right; }
 .med-price strong { display: block; font-size: 16px; color: var(--primary); }
-.add-btn { margin-top: 6px; padding: 6px 14px; background: var(--primary-bg); color: var(--primary); border-radius: 8px; font-weight: 700; font-size: 13px; }
+.add-btn {
+  margin-top: 6px; padding: 6px 14px; background: var(--primary-bg); color: var(--primary);
+  border-radius: 8px; font-weight: 700; font-size: 13px;
+  min-width: 78px; text-align: center;
+  transition: background 0.25s, color 0.25s, transform 0.15s;
+}
+.add-btn:hover { transform: translateY(-1px); }
+.add-btn.added {
+  background: var(--success-bg); color: var(--success);
+  animation: add-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes add-pop {
+  0% { transform: scale(0.88); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.cart-count { display: inline-block; animation: badge-bump 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes badge-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
 .order-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 8px; }
 .order-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .badge { padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }

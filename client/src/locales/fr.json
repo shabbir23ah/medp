@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "MedPrescription",
+    "name": "Wellness",
     "tagline": "Vos ordonnances, toujours avec vous"
   },
   "nav": {
@@ -19,6 +19,10 @@
     "otpLabel": "Saisir OTP",
     "otpPlaceholder": "123456",
     "verify": "Vérifier",
+    "resend": "Renvoyer l'OTP",
+    "resendIn": "Renvoyer l'OTP dans {s}s",
+    "changeNumber": "Numéro incorrect ? Modifiez-le",
+    "otpResent": "Un nouvel OTP a été envoyé",
     "invalidOtp": "Code invalide ou expiré",
     "logout": "Déconnexion"
   },
@@ -129,7 +133,7 @@
     "feat4Title": "Recherche Rapide",
     "feat4Desc": "Recherchez par médecin, hôpital, diagnostic ou médicament. Tout votre historique à portée de main.",
     "feat5Title": "4 Langues",
-    "feat5Desc": "Utilisez MedPrescription en anglais, bengali, espagnol ou français. Changez à tout moment depuis les paramètres.",
+    "feat5Desc": "Utilisez Wellness en anglais, bengali, espagnol ou français. Changez à tout moment depuis les paramètres.",
     "feat6Title": "Confidentialité d'Abord",
     "feat6Desc": "Vos données sont chiffrées et privées. Connectez-vous avec votre numéro de téléphone — sans mot de passe.",
     "howTag": "Comment Ça Marche",
@@ -150,11 +154,11 @@
     "demoItem3": "Recherchez par n'importe quel mot",
     "demoItem4": "Des rappels qui fonctionnent",
     "ctaTitle": "Prêt à prendre le contrôle de votre santé ?",
-    "ctaSub": "Rejoignez des milliers de personnes qui font confiance à MedPrescription pour garder leurs dossiers médicaux organisés, accessibles et sécurisés.",
+    "ctaSub": "Rejoignez des milliers de personnes qui font confiance à Wellness pour garder leurs dossiers médicaux organisés, accessibles et sécurisés.",
     "ctaButton": "Commencer — C'est Gratuit pour Toujours",
     "footerDesc": "Votre compagnon de santé personnel. Conservez vos ordonnances, suivez vos médicaments et ne manquez jamais un rendez-vous.",
     "footerProduct": "Produit",
     "footerSupport": "Support",
-    "footer": "© 2026 MedPrescription. Fait avec ❤️ pour votre santé."
+    "footer": "© 2026 Wellness. Fait avec ❤️ pour votre santé."
   }
 }

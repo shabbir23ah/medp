@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <p class="version">MedPrescription v2.0</p>
+    <p class="version">Wellness v2.0</p>
   </AppLayout>
 </template>
 

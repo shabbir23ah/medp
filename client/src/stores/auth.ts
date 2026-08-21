@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useApi } from '../composables/useApi';
 import router from '../router';
 
@@ -30,6 +30,11 @@ export const useAuthStore = defineStore('auth', () => {
     if (user.value) localStorage.setItem('user', JSON.stringify(user.value));
     else localStorage.removeItem('user');
   }
+
+  // Auto-persist on ANY change (e.g. `auth.user = ...` in ProfilePage).
+  // Previously persist() only ran on login/logout, so profile edits were
+  // lost from localStorage on reload and appeared "not saved".
+  watch([token, user], persist, { deep: true });
 
   async function login(phone: string) {
     const api = useApi();

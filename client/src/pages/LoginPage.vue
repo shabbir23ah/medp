@@ -3,7 +3,7 @@
     <div class="login-card">
       <div class="logo">💊</div>
       <h1>Welcome back</h1>
-      <p class="tagline">Sign in to your MedPrescription account</p>
+      <p class="tagline">Sign in to your Wellness account</p>
 
       <form @submit.prevent="handleSendOtp">
         <label>Phone Number</label>
