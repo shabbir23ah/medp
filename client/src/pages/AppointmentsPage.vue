@@ -49,29 +49,48 @@
         <button @click="update(a.id, 'cancelled')" class="btn-decline">✕ Decline</button>
       </div>
 
-      <router-link
-        v-if="a.status === 'confirmed'"
-        :to="`/chat/${a.id}`"
-        class="btn-chat"
-      >
-        <MessageCircle :size="14" :stroke-width="2" class="inline-icon" /> Open Chat
-      </router-link>
+      <div v-if="a.status === 'confirmed'" class="apt-actions-row">
+        <router-link :to="`/chat/${a.id}`" class="btn-chat">
+          <MessageCircle :size="14" :stroke-width="2" class="inline-icon" /> Message
+        </router-link>
+        <button
+          @click="startCall(a)"
+          class="btn-call"
+          :disabled="!isCallTime(a)"
+          :title="isCallTime(a) ? 'Start video call' : 'Unlocks at appointment time'"
+        >
+          <Video :size="14" :stroke-width="2" class="inline-icon" />
+          {{ isCallTime(a) ? 'Call Now' : `Call at ${fmtTime(a.scheduled_at)}` }}
+        </button>
+      </div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
 import { useAuthStore } from '../stores/auth';
-import { Calendar, MessageCircle } from 'lucide-vue-next';
+import { Calendar, MessageCircle, Video } from 'lucide-vue-next';
 
 const api = useApi();
 const auth = useAuthStore();
+const router = useRouter();
 const appts = ref<any[]>([]);
 const loading = ref(true);
 const tab = ref('upcoming');
+
+// Video call unlocks once the appointment time arrives
+function isCallTime(a: any) {
+  return new Date(a.scheduled_at) <= new Date();
+}
+
+function startCall(a: any) {
+  if (!isCallTime(a)) return;
+  router.push(`/chat/${a.id}?call=1`);
+}
 
 const filteredAppts = computed(() => {
   const now = new Date();
@@ -158,6 +177,7 @@ function fmtTime(d: string) { return new Date(d).toLocaleTimeString([], { hour: 
 .btn-accept { background: var(--success-bg); color: var(--success); }
 .btn-decline { background: var(--danger-bg); color: var(--danger); }
 .btn-chat {
+  flex: 1;
   display: flex; align-items: center; justify-content: center; gap: 6px;
   margin-top: 14px; padding: 12px;
   background: var(--primary); color: var(--primary-text);
@@ -166,5 +186,18 @@ function fmtTime(d: string) { return new Date(d).toLocaleTimeString([], { hour: 
   transition: transform 0.15s;
 }
 .btn-chat:hover { transform: scale(1.01); }
+.apt-actions-row { display: flex; gap: 10px; margin-top: 14px; }
+.apt-actions-row .btn-chat { margin-top: 0; }
+.btn-call {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px; border-radius: 12px;
+  background: var(--success-bg); color: var(--success);
+  border: none; font-weight: 700; font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.btn-call:not(:disabled):hover { transform: scale(1.01); background: rgba(16,185,129,0.18); }
+.btn-call:disabled { opacity: 0.55; cursor: not-allowed; }
 .inline-icon { display: inline-block; vertical-align: -2px; }
 </style>

@@ -22,8 +22,8 @@
 
         <div class="stats-row">
           <div class="stat-item">
-            <span class="stat-num">12+</span>
-            <span class="stat-label">Years Exp.</span>
+            <span class="stat-num verified-num">✓</span>
+            <span class="stat-label">{{ doctor.license_number ? 'Licensed' : 'Pending Review' }}</span>
           </div>
           <div class="stat-divider"></div>
           <div class="stat-item">
@@ -82,6 +82,22 @@
         </div>
       </div>
 
+      <!-- FAQ -->
+      <div class="section-card" v-if="faqs.length > 0">
+        <h3><HelpCircle :size="16" :stroke-width="2" class="inline-icon" /> Frequently Asked Questions</h3>
+        <div v-for="(f, i) in faqs" :key="i" class="faq-item">
+          <button
+            @click="toggleFaq(i)"
+            class="faq-q"
+            :aria-expanded="openFaq === i"
+          >
+            <span>{{ f.q }}</span>
+            <ChevronDown :size="16" :stroke-width="2" class="faq-chevron" :class="{ open: openFaq === i }" />
+          </button>
+          <div v-show="openFaq === i" class="faq-a">{{ f.a }}</div>
+        </div>
+      </div>
+
       <!-- Book Appointment -->
       <div class="book-card">
         <h3>Book an Appointment</h3>
@@ -113,7 +129,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Video, Phone, Star } from 'lucide-vue-next';
+import { Video, Phone, Star, HelpCircle, ChevronDown } from 'lucide-vue-next';
 import { useRoute, useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import { useApi } from '../composables/useApi';
@@ -150,6 +166,66 @@ const parsedHours = computed(() => {
     if (typeof h === 'string') return JSON.parse(h);
     return h || {};
   } catch { return {}; }
+});
+
+// FAQ generated from real profile data — never invents facts
+const openFaq = ref<number | null>(0);
+
+function toggleFaq(i: number) {
+  openFaq.value = openFaq.value === i ? null : i;
+}
+
+function scheduleSummary(): string {
+  const entries = Object.entries(parsedHours.value);
+  if (entries.length === 0) return '';
+  return entries
+    .filter(([, time]) => time && time !== 'Off')
+    .map(([day, time]) => `${day} ${time}`)
+    .join(', ');
+}
+
+const faqs = computed(() => {
+  const d = doctor.value;
+  if (!d) return [];
+  const list: { q: string; a: string }[] = [];
+
+  list.push({
+    q: `What does ${d.name || 'this doctor'} specialize in?`,
+    a: `${d.name || 'The doctor'} is a ${d.specialization || 'general practitioner'}. Book a consultation to discuss your specific condition and treatment options.`,
+  });
+
+  if (d.consultation_fee) {
+    list.push({
+      q: 'What is the consultation fee?',
+      a: `The consultation fee is ৳${d.consultation_fee} per visit. You can pick a date and time in the booking section below.`,
+    });
+  }
+
+  if (d.license_number) {
+    list.push({
+      q: 'Is this doctor verified?',
+      a: `Yes — identity verified with medical license no. ${d.license_number}.`,
+    });
+  }
+
+  const hours = scheduleSummary();
+  if (hours) {
+    list.push({
+      q: 'When is the doctor available?',
+      a: `Available hours: ${hours}.`,
+    });
+  }
+
+  if (typeof d.video_enabled === 'boolean') {
+    list.push({
+      q: 'Can I consult online?',
+      a: d.video_enabled
+        ? 'Yes — video consultations are available. Once your appointment is confirmed, open it from your appointments page at the scheduled time and press "Call Now".'
+        : 'Currently this doctor offers in-person visits only.',
+    });
+  }
+
+  return list;
 });
 
 onMounted(async () => {
@@ -291,6 +367,33 @@ async function bookAppointment() {
 }
 .section-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
 .section-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+/* FAQ accordion */
+.faq-item { border-bottom: 1px solid var(--border-light); }
+.faq-item:last-child { border-bottom: none; }
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.faq-q:hover { color: var(--primary); }
+.faq-chevron { flex-shrink: 0; transition: transform 0.25s ease; color: var(--text-muted); }
+.faq-chevron.open { transform: rotate(180deg); color: var(--primary); }
+.faq-a {
+  padding: 0 0 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+.verified-num { color: var(--success); }
 
 .hours-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
 .hour-chip {

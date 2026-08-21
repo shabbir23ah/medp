@@ -4,15 +4,23 @@ import { z } from 'zod';
 import { config } from '../config.js';
 import { sendOtp, checkOtp, getOrCreateUser } from '../services/auth.js';
 import { pool } from '../db/pool.js';
+import { normalizePhone } from '../utils/phone.js';
 
 const router = Router();
 
+// Validate loose input, then canonicalize so 018X / 880X / +880X all
+// resolve to the SAME account
+const phoneSchema = z.string()
+  .min(6).max(20)
+  .regex(/^\+?[0-9]+$/, 'Invalid phone number')
+  .transform(normalizePhone);
+
 const sendOtpSchema = z.object({
-  phone: z.string().min(6).max(20).regex(/^\+?[0-9]+$/, 'Invalid phone number'),
+  phone: phoneSchema,
 });
 
 const verifyOtpSchema = z.object({
-  phone: z.string().min(6).max(20),
+  phone: phoneSchema,
   code: z.string().length(6),
 });
 
@@ -68,7 +76,7 @@ router.post('/verify-otp', async (req, res) => {
 
 // POST /api/auth/register — set role and optional doctor profile
 const registerSchema = z.object({
-  phone: z.string().min(6).max(20).regex(/^\+?[0-9]+$/),
+  phone: phoneSchema,
   code: z.string().length(6).optional(),
   role: z.enum(['patient', 'doctor', 'pharmacy']),
   name: z.string().min(1).max(100).optional(),

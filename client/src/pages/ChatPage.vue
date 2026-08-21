@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Phone, PhoneOff, Video, Mic, Pill } from 'lucide-vue-next';
 import AppLayout from '../components/AppLayout.vue';
 import { getSocket } from '../composables/useSocket';
@@ -68,6 +68,7 @@ import { useApi } from '../composables/useApi';
 import { useAuthStore } from '../stores/auth';
 
 const route = useRoute();
+const router = useRouter();
 const api = useApi();
 const auth = useAuthStore();
 const call = useCall();
@@ -200,6 +201,12 @@ onMounted(async () => {
   socket.emit('chat:join', appointmentId);
   socket.on('chat:message', onMessage);
   socket.on('chat:typing', onPeerTyping);
+
+  // Arrived via "Call Now" on the appointments page
+  if (route.query.call === '1' && receiverId) {
+    router.replace({ query: {} });
+    call.startCall(appointmentId, receiverId);
+  }
 });
 
 onUnmounted(() => {

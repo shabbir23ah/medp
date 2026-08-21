@@ -1,8 +1,10 @@
 <template>
   <AppLayout>
     <div class="page-hero">
-      <h1>Your Health Timeline</h1>
-      <p>Every prescription, report, and record — chronologically organized.</p>
+      <div class="hero-text">
+        <h1>Your Health Timeline</h1>
+        <p>Every prescription, report, and record — chronologically organized.</p>
+      </div>
       <router-link to="/upload" class="fab">+ New Prescription</router-link>
     </div>
 
@@ -55,9 +57,14 @@ function loadMore() { store.fetchPrescriptions(store.page + 1); }
 
 <style scoped>
 .page-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 28px;
-  position: relative;
 }
+.hero-text { min-width: 0; }
 .page-hero h1 {
   font-size: 28px;
   font-weight: 800;
@@ -69,9 +76,7 @@ function loadMore() { store.fetchPrescriptions(store.page + 1); }
   color: var(--text-muted);
 }
 .fab {
-  position: absolute;
-  top: 0;
-  right: 0;
+  flex-shrink: 0;
   padding: 12px 20px;
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--primary-text);
@@ -81,6 +86,10 @@ function loadMore() { store.fetchPrescriptions(store.page + 1); }
   text-decoration: none;
   box-shadow: 0 4px 16px rgba(13,148,136,0.25);
   transition: transform 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .fab { width: 100%; text-align: center; }
 }
 .fab:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(13,148,136,0.35); }
 .timeline-divider {
