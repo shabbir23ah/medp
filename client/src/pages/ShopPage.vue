@@ -193,7 +193,7 @@ async function placeOrder() {
     const pharmacyId = cart.value[0].pharmacyId;
     const { data } = await api.post('/pharmacy/orders', {
       pharmacyId,
-      items: cart.value.map(i => ({ medicineId: i.id, quantity: i.quantity, price: i.price })),
+      items: cart.value.map(i => ({ medicineId: i.id, quantity: i.quantity })),
       deliveryAddress: deliveryAddress.value,
       patientPhone: deliveryPhone.value,
     });

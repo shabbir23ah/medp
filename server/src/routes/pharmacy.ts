@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
-import { searchMedicines, addMedicine, createOrder, getPatientOrders, getPharmacyOrders, getOrderItems, updateOrderStatus } from '../services/pharmacy.js';
+import { searchMedicines, addMedicine, createOrder, OrderError, getPatientOrders, getPharmacyOrders, getOrderItems, updateOrderStatus } from '../services/pharmacy.js';
 import { pool } from '../db/pool.js';
 
 const router = Router();
@@ -51,17 +51,36 @@ router.delete('/medicines/:id', authenticate, async (req: AuthRequest, res) => {
 });
 
 // POST /api/pharmacy/orders — place order (patient)
+// Price is NEVER trusted from the client — server looks up current DB price + stock.
 router.post('/orders', authenticate, async (req: AuthRequest, res) => {
   const schema = z.object({
     pharmacyId: z.string().uuid(),
-    items: z.array(z.object({ medicineId: z.string().uuid(), quantity: z.number().int().min(1), price: z.number().int().min(1) })),
-    deliveryAddress: z.string().min(5),
-    patientPhone: z.string().min(6),
+    items: z.array(z.object({
+      medicineId: z.string().uuid(),
+      quantity: z.number().int().min(1).max(100),
+    })).min(1).max(50),
+    deliveryAddress: z.string().min(5).max(500),
+    patientPhone: z.string().min(6).max(20),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ ok: false, error: parsed.error.errors[0].message }); return; }
-  const order = await createOrder(req.userId!, parsed.data.pharmacyId, parsed.data.items, parsed.data.deliveryAddress, parsed.data.patientPhone);
-  res.status(201).json({ ok: true, data: order });
+
+  try {
+    const order = await createOrder(
+      req.userId!,
+      parsed.data.pharmacyId,
+      parsed.data.items,
+      parsed.data.deliveryAddress,
+      parsed.data.patientPhone
+    );
+    res.status(201).json({ ok: true, data: order });
+  } catch (err) {
+    if (err instanceof OrderError) {
+      res.status(400).json({ ok: false, error: err.message });
+      return;
+    }
+    throw err;
+  }
 });
 
 // GET /api/pharmacy/orders — list orders

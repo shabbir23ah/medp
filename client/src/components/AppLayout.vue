@@ -20,10 +20,6 @@
         </router-link>
       </nav>
       <div class="sidebar-footer">
-        <button class="sidebar-item" @click="theme.toggle()">
-          <component :is="theme.isDark.value ? Sun : Moon" class="sidebar-icon" :size="18" :stroke-width="2" />
-          <span class="sidebar-label">{{ theme.isDark.value ? 'Light' : 'Dark' }}</span>
-        </button>
         <router-link to="/profile" class="sidebar-item" active-class="active">
           <div class="sidebar-avatar">
             <img v-if="auth.user?.profilePic" :src="auth.user.profilePic" alt="" />
@@ -40,11 +36,7 @@
         <div class="topbar-left">
           <p class="greeting">{{ greeting }}, <strong>{{ auth.user?.name || 'User' }}</strong></p>
         </div>
-        <div class="topbar-right">
-          <button class="icon-btn" @click="theme.toggle()">
-            <component :is="theme.isDark.value ? Sun : Moon" :size="18" :stroke-width="2" />
-          </button>
-        </div>
+        <div class="topbar-right"></div>
       </header>
 
       <main class="main-content">
@@ -63,13 +55,11 @@ import { computed, onMounted } from 'vue';
 import BottomNav from './BottomNav.vue';
 import CallBanner from './CallBanner.vue';
 import { useAuthStore } from '../stores/auth';
-import { useTheme } from '../composables/useTheme';
 import { useCall } from '../composables/useCall';
 
-import { Home, Stethoscope, ShoppingCart, ClipboardList, Calendar, Upload, LayoutDashboard, AlarmClock, Pill, Sun, Moon } from 'lucide-vue-next';
+import { Home, Stethoscope, ShoppingCart, ClipboardList, Calendar, Upload, LayoutDashboard, AlarmClock, Pill } from 'lucide-vue-next';
 
 const auth = useAuthStore();
-const theme = useTheme();
 const call = useCall();
 
 // Listen for incoming calls on the shared socket for as long as the

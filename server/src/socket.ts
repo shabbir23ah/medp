@@ -1,10 +1,18 @@
 import { Server as HttpServer } from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
+import { config } from './config.js';
+import { pool } from './db/pool.js';
 import { sendMessage } from './services/chat.js';
 
 let io: Server;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+interface SocketAuth {
+  userId: string;
+  role: string;
+}
 
 // A malformed payload from any client must never take down the process
 function safeHandler(fn: (data: any) => void | Promise<void>) {
@@ -17,28 +25,64 @@ function safeHandler(fn: (data: any) => void | Promise<void>) {
   };
 }
 
+function getAuth(socket: Socket): SocketAuth | null {
+  return (socket.data.auth as SocketAuth | undefined) ?? null;
+}
+
+async function isAppointmentMember(appointmentId: string, userId: string): Promise<boolean> {
+  const r = await pool.query(
+    `SELECT 1 FROM appointments
+     WHERE id = $1 AND (patient_id = $2 OR doctor_id = $2)`,
+    [appointmentId, userId]
+  );
+  return (r.rowCount ?? 0) > 0;
+}
+
 export function initSocket(httpServer: HttpServer) {
   io = new Server(httpServer, {
-    cors: { origin: '*', methods: ['GET', 'POST'] },
+    cors: {
+      origin: config.CORS_ORIGIN === '*' ? true : config.CORS_ORIGIN.split(',').map(o => o.trim()),
+      methods: ['GET', 'POST'],
+    },
+  });
+
+  // Require a valid JWT before any socket event is handled
+  io.use((socket, next) => {
+    const token =
+      (typeof socket.handshake.auth?.token === 'string' && socket.handshake.auth.token) ||
+      (typeof socket.handshake.headers?.authorization === 'string' &&
+        socket.handshake.headers.authorization.startsWith('Bearer ')
+        ? socket.handshake.headers.authorization.slice(7)
+        : null);
+
+    if (!token) {
+      return next(new Error('Unauthorized'));
+    }
+
+    try {
+      const payload = jwt.verify(token, config.JWT_SECRET) as { userId: string; role: string };
+      if (!payload.userId || !UUID_RE.test(payload.userId)) {
+        return next(new Error('Unauthorized'));
+      }
+      socket.data.auth = { userId: payload.userId, role: payload.role || 'patient' } satisfies SocketAuth;
+      next();
+    } catch {
+      next(new Error('Unauthorized'));
+    }
   });
 
   io.on('connection', (socket) => {
-    console.log(`[WS] Client connected: ${socket.id}`);
+    const auth = getAuth(socket)!;
+    // Auto-join personal room — no client-supplied userId needed
+    socket.join(`user:${auth.userId}`);
+    console.log(`[WS] Client connected: ${socket.id} user:${auth.userId}`);
 
-    // Personal room — lets us reach a user anywhere in the app
-    // (required for global incoming-call banners)
-    socket.on('auth:identify', safeHandler((userId: string) => {
-      if (typeof userId === 'string' && UUID_RE.test(userId)) {
-        socket.join(`user:${userId}`);
-      }
-    }));
-
-    // Join a chat room for a specific appointment
-    socket.on('chat:join', safeHandler((appointmentId: string) => {
-      if (typeof appointmentId === 'string' && UUID_RE.test(appointmentId)) {
-        socket.join(`chat:${appointmentId}`);
-        console.log(`[WS] ${socket.id} joined chat:${appointmentId}`);
-      }
+    // Join a chat room for a specific appointment (membership required)
+    socket.on('chat:join', safeHandler(async (appointmentId: string) => {
+      if (typeof appointmentId !== 'string' || !UUID_RE.test(appointmentId)) return;
+      if (!(await isAppointmentMember(appointmentId, auth.userId))) return;
+      socket.join(`chat:${appointmentId}`);
+      console.log(`[WS] ${socket.id} joined chat:${appointmentId}`);
     }));
 
     socket.on('chat:leave', safeHandler((appointmentId: string) => {
@@ -47,10 +91,9 @@ export function initSocket(httpServer: HttpServer) {
       }
     }));
 
-    // Send a message in real-time
+    // Send a message — senderId always taken from JWT, never client payload
     socket.on('chat:message', safeHandler(async (data: {
       appointmentId: string;
-      senderId: string;
       receiverId: string;
       content: string;
       type?: string;
@@ -58,24 +101,23 @@ export function initSocket(httpServer: HttpServer) {
     }) => {
       if (
         !data || !UUID_RE.test(String(data.appointmentId)) ||
-        !UUID_RE.test(String(data.senderId)) || !UUID_RE.test(String(data.receiverId)) ||
+        !UUID_RE.test(String(data.receiverId)) ||
         typeof data.content !== 'string' || !data.content.trim() ||
         data.content.length > 5000
       ) {
         return;
       }
 
-      // Persist to DB
+      if (!(await isAppointmentMember(data.appointmentId, auth.userId))) return;
+
       const msg = await sendMessage(
-        data.senderId,
+        auth.userId,
         data.receiverId,
         data.appointmentId,
         data.content,
         data.type === 'prescription' ? 'prescription' : 'text'
       );
 
-      // Broadcast to all in the room (sender included — used to confirm
-      // optimistic sends via clientId)
       io.to(`chat:${data.appointmentId}`).emit('chat:message', {
         id: msg.id,
         sender_id: msg.sender_id,
@@ -88,25 +130,22 @@ export function initSocket(httpServer: HttpServer) {
       });
     }));
 
-    // Typing indicator — relay to everyone else in the conversation
-    socket.on('chat:typing', safeHandler((data: { appointmentId: string }) => {
-      if (data && UUID_RE.test(String(data.appointmentId))) {
-        socket.to(`chat:${data.appointmentId}`).emit('chat:typing');
-      }
+    socket.on('chat:typing', safeHandler(async (data: { appointmentId: string }) => {
+      if (!data || !UUID_RE.test(String(data.appointmentId))) return;
+      if (!(await isAppointmentMember(data.appointmentId, auth.userId))) return;
+      socket.to(`chat:${data.appointmentId}`).emit('chat:typing');
     }));
 
-    // WebRTC signaling — unicast via personal rooms so calls work
-    // regardless of which screen each peer is on
+    // WebRTC signaling — callerId always from JWT
     socket.on('call:offer', safeHandler((data: {
       appointmentId: string;
       offer: any;
-      callerId: string;
       receiverId: string;
     }) => {
-      if (!data || !UUID_RE.test(String(data.receiverId))) return;
+      if (!data || !UUID_RE.test(String(data.receiverId)) || !UUID_RE.test(String(data.appointmentId))) return;
       io.to(`user:${data.receiverId}`).emit('call:offer', {
         offer: data.offer,
-        callerId: data.callerId,
+        callerId: auth.userId,
         appointmentId: data.appointmentId,
       });
     }));
@@ -136,7 +175,7 @@ export function initSocket(httpServer: HttpServer) {
     });
   });
 
-  console.log('[WS] Socket.io server initialized');
+  console.log('[WS] Socket.io server initialized (JWT required)');
   return io;
 }
 

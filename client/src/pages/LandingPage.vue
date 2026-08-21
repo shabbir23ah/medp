@@ -16,7 +16,8 @@
         <div class="nav-actions">
           <button class="btn-lang" @click="cycleLang">
             <span class="lang-globe">🌐</span>
-            <span class="lang-label">{{ currentLang }}</span>
+            <span class="lang-full">{{ currentLang }}</span>
+            <span class="lang-code">{{ currentLangCode }}</span>
           </button>
           <router-link to="/login" class="btn-signin">Sign In</router-link>
           <router-link to="/register" class="btn-signup">Sign Up</router-link>
@@ -212,7 +213,7 @@
           </div>
           <div class="footer-col">
             <h4>{{ $t('landing.footerSupport') }}</h4>
-            <a href="#">help@medprescription.app</a>
+            <a href="#">help@wellness.app</a>
             <a href="#">FAQ</a>
             <a href="#">Privacy Policy</a>
           </div>
@@ -256,6 +257,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll));
 
 const currentLang = computed(() => {
   return availableLocales.find(l => l.code === locale.value)?.nativeName || 'English';
+});
+
+const currentLangCode = computed(() => {
+  return availableLocales.find(l => l.code === locale.value)?.code.toUpperCase() || 'EN';
 });
 
 function cycleLang() {
@@ -418,10 +423,11 @@ const demoItems = computed(() => [
               backdrop-filter 0.4s ease;
 }
 .nav.scrolled {
-  background: rgba(255,255,255,0.82);
+  /* Theme-aware frosted glass — was hardcoded white, broke dark mode */
+  background: var(--dock-bg);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: var(--shadow-md);
   padding: 2px 0;
 }
 .nav-inner {
@@ -442,7 +448,8 @@ const demoItems = computed(() => [
 }
 .btn-lang:hover { border-color: var(--c-primary); color: var(--c-primary); background: rgba(8,145,178,0.03); }
 .lang-globe { font-size: 14px; }
-.lang-label { max-width: 60px; overflow: hidden; text-overflow: ellipsis; }
+.lang-full { max-width: 60px; overflow: hidden; text-overflow: ellipsis; }
+.lang-code { display: none; font-weight: 700; letter-spacing: 0.5px; }
 .btn-signin {
   padding: 10px 22px; border-radius: 12px;
   background: linear-gradient(135deg, var(--c-primary), var(--c-accent));
@@ -932,6 +939,20 @@ const demoItems = computed(() => [
   .stats-inner { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
+  /* Compact nav — everything fits within small screens */
+  .nav-inner { padding: 10px 12px; gap: 8px; }
+  .nav-actions { gap: 6px; }
+  .btn-lang { padding: 7px 8px; font-size: 11px; gap: 4px; }
+  .lang-globe { font-size: 12px; }
+  .lang-full { display: none; }
+  .lang-code { display: inline; }
+  .brand-icon { font-size: 24px; }
+  .btn-signin, .btn-signup {
+    padding: 8px 13px;
+    font-size: 12px;
+    border-width: 1.5px;
+  }
+
   .hero { padding: 130px 16px 60px; }
   .hero-cta { flex-direction: column; }
   .hero-trust { flex-direction: column; gap: 10px; }
@@ -941,7 +962,11 @@ const demoItems = computed(() => [
   .step { gap: 16px; }
   .step-num { width: 36px; height: 36px; font-size: 15px; }
   .cta-card { padding: 48px 24px; border-radius: 20px; }
-  .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+
+  /* Footer: brand full row, Product + Support side by side */
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .brand-col { grid-column: 1 / -1; }
+
   .brand-text { display: none; }
   .float-badge { display: none; }
   .shape-1, .shape-2, .shape-3, .shape-4 { display: none; }

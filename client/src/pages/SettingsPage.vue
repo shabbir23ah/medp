@@ -6,13 +6,6 @@
     <div class="card">
       <h3 class="section-title">Appearance</h3>
       <div class="setting-row">
-        <div><strong>Dark Mode</strong><p class="sub">Easier on the eyes at night</p></div>
-        <label class="toggle">
-          <input type="checkbox" :checked="theme.isDark.value" @change="theme.toggle()" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="setting-row">
         <div><strong>Language</strong></div>
         <select :value="locale" @change="switchLang(($event.target as HTMLSelectElement).value)" class="lang-select">
           <option v-for="l in availableLocales" :key="l.code" :value="l.code">{{ l.nativeName }}</option>
@@ -41,11 +34,9 @@
 import { reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppLayout from '../components/AppLayout.vue';
-import { useTheme } from '../composables/useTheme';
 import { availableLocales } from '../locales';
 
 const { locale } = useI18n();
-const theme = useTheme();
 
 function switchLang(code: string) { locale.value = code; localStorage.setItem('language', code); }
 

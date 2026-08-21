@@ -12,7 +12,7 @@ export default defineConfig({
         name: 'Wellness',
         short_name: 'Wellness',
         description: 'Your prescriptions, always with you',
-        theme_color: '#0891b2',
+        theme_color: '#0D9488',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [

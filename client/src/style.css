@@ -1,6 +1,5 @@
-/* Light theme (default) */
-:root,
-[data-theme="light"] {
+/* Design tokens */
+:root {
   --bg: #F8FAFC;
   --bg-secondary: #F1F5F9;
   --surface: #FFFFFF;
@@ -26,7 +25,7 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
   --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
   --nav-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  /* iOS glossy dock — light */
+  /* iOS glossy dock */
   --dock-bg: rgba(255, 255, 255, 0.88);
   --dock-highlight: rgba(255, 255, 255, 0.5);
   --dock-sheen: rgba(255, 255, 255, 0.3);
@@ -36,45 +35,6 @@
     inset 0 1px 0 rgba(255,255,255,0.55),
     0 12px 32px rgba(0,0,0,0.16),
     0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* Dark theme */
-[data-theme="dark"] {
-  --bg: #0B1121;
-  --bg-secondary: #111827;
-  --surface: #1A2332;
-  --surface-hover: #1F2A3A;
-  --text: #F1F5F9;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
-  --border: #1E293B;
-  --border-light: #1A2332;
-  --primary: #14B8A6;
-  --primary-light: #2DD4BF;
-  --primary-dark: #0D9488;
-  --primary-bg: rgba(20,184,166,0.1);
-  --primary-text: #0B1121;
-  --danger: #F87171;
-  --danger-bg: rgba(248,113,113,0.1);
-  --warning: #FBBF24;
-  --warning-bg: rgba(251,191,36,0.1);
-  --success: #34D399;
-  --success-bg: rgba(52,211,153,0.1);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
-  --shadow: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-  --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
-  --nav-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  /* iOS glossy dock — dark */
-  --dock-bg: rgba(26, 35, 50, 0.85);
-  --dock-highlight: rgba(255, 255, 255, 0.05);
-  --dock-sheen: rgba(255, 255, 255, 0.05);
-  --dock-border: rgba(255, 255, 255, 0.1);
-  --dock-inset: rgba(255, 255, 255, 0.05);
-  --dock-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.03),
-    0 12px 32px rgba(0,0,0,0.5),
-    0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* Base */

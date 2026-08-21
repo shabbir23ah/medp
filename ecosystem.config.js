@@ -1,12 +1,14 @@
 // PM2 ecosystem config — keeps the API server running in production
 // Usage: pm2 start ecosystem.config.js --env production
+//
+// Secrets come from the process environment (or a .env file loaded by
+// dotenv in config.ts). NEVER hardcode DATABASE_URL / JWT_SECRET here.
 module.exports = {
   apps: [
     {
       name: 'medprescription-api',
       cwd: './server',
       script: 'dist/index.js',
-      // Build first: cd server && npm run build
       instances: 1,
       exec_mode: 'fork',
       autorestart: true,
@@ -17,9 +19,9 @@ module.exports = {
       env_production: {
         NODE_ENV: 'production',
       },
-      // Logs
-      out_file: '/var/log/medprescription/out.log',
-      error_file: '/var/log/medprescription/error.log',
+      // Logs — override in the VPS-specific ecosystem if needed
+      out_file: './logs/out.log',
+      error_file: './logs/error.log',
       merge_logs: true,
       time: true,
     },

@@ -177,7 +177,6 @@ async function sendText() {
 
   getSocket(userId).emit('chat:message', {
     appointmentId,
-    senderId: userId,
     receiverId,
     content,
     type: 'text',

@@ -127,7 +127,7 @@ export function useCall() {
 
       const offer = await pc!.createOffer();
       await pc!.setLocalDescription(offer);
-      socket.emit('call:offer', { appointmentId, offer, callerId: auth.user?.id, receiverId });
+      socket.emit('call:offer', { appointmentId, offer, receiverId });
 
       peerUserId = receiverId;
       activeAppointmentId.value = appointmentId;
